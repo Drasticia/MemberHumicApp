@@ -43,8 +43,11 @@ class User {
     final String positionName;
     final int isAdmin;
     final dynamic emailVerifiedAt;
+    final dynamic code;
+    final String branch;
     final DateTime createdAt;
     final DateTime updatedAt;
+    final dynamic deletedAt;
 
     User({
         required this.id,
@@ -65,8 +68,11 @@ class User {
         required this.positionName,
         required this.isAdmin,
         required this.emailVerifiedAt,
+        required this.code,
+        required this.branch,
         required this.createdAt,
         required this.updatedAt,
+        required this.deletedAt,
     });
 
     factory User.fromRawJson(String str) => User.fromJson(json.decode(str));
@@ -92,8 +98,11 @@ class User {
         positionName: json["position_name"],
         isAdmin: json["isAdmin"],
         emailVerifiedAt: json["email_verified_at"],
+        code: json["code"],
+        branch: json["branch"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        deletedAt: json["deleted_at"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -115,7 +124,10 @@ class User {
         "position_name": positionName,
         "isAdmin": isAdmin,
         "email_verified_at": emailVerifiedAt,
+        "code": code,
+        "branch": branch,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
+        "deleted_at": deletedAt,
     };
 }

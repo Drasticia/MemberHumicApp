@@ -1,28 +1,25 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:member_humic/models/lmember.dart';
+import 'package:intl/intl.dart';
+import 'package:member_humic/data/models/request/user_request_model.dart'; // Pastikan path ini benar
 
 class MemberDetailDialog extends StatelessWidget {
-  final TimMember member;
+  final Member member;
 
-  const MemberDetailDialog({Key? key, required this.member}) : super(key: key);
-  
+  const MemberDetailDialog({super.key, required this.member});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor:
-          Colors.transparent, 
+      backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(10),
       child: BackdropFilter(
-        filter: ImageFilter.blur(
-            sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.9,
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(1),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
@@ -54,20 +51,35 @@ class MemberDetailDialog extends StatelessWidget {
                       children: <Widget>[
                         _buildMemberInfoRow('Nama', member.name),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('NIP', member.nip.toString()),
+                        _buildMemberInfoRow(
+                          'NIP',
+                          member.nip == 0 ? '' : member.nip.toString(),
+                        ),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Fakultas', member.fakultas),
+                        _buildMemberInfoRow('Fakultas', member.faculty),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Prodi', member.prodi),
+                        _buildMemberInfoRow('Program Studi', member.department),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Nomor HP', member.number.toString()),
+                        _buildMemberInfoRow(
+                          'Nomor HP',
+                          member.handphone == 0 ? '' : member.handphone.toString(),
+                        ),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Jenis Kelamin', member.gender),
+                        _buildMemberInfoRow(
+                          'Jenis Kelamin',
+                          member.gender == 1 ? 'Laki-laki' : 'Perempuan',
+                        ),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Agama', member.agama),
+                        _buildMemberInfoRow('Agama', member.religion),
                         const SizedBox(height: 12),
-                        _buildMemberInfoRow('Tanggal Lahir', member.lahir),
+                        _buildMemberInfoRow('Alamat Asal', member.address),
                         const SizedBox(height: 12),
+                        _buildMemberInfoRow(
+                          'Tanggal Lahir',
+                          member.birthday != null
+                              ? DateFormat('dd MMMM yyyy').format(member.birthday)
+                              : '',
+                        ),
                       ],
                     ),
                   ),
@@ -75,57 +87,73 @@ class MemberDetailDialog extends StatelessWidget {
                   Column(
                     children: [
                       Container(
-                          width: 110,
-                          height: 140,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://humic.telkomuniversity.ac.id/wp-content/uploads/2024/05/amilaa-1.png'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        width: 110,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          color: Colors
+                              .grey[200],
+                          image: member.profilePicture.isNotEmpty
+                              ? DecorationImage(
+                                  image: NetworkImage(member.profilePicture),
+                                  fit: BoxFit.cover,
+                                )
+                              : null, 
                         ),
+                        child: member.profilePicture.isEmpty
+                            ? Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 50, 
+                                  color: Colors
+                                      .grey[600],
+                                ),
+                              )
+                            : null,
+                      ),
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xffEBF9F1),
-                          border: Border.all(
-                            color: const Color(0xffEBF9F1)
-                          ),
-                          borderRadius: BorderRadius.circular(22)
+                          color: member.status == 1
+                              ? const Color(0xffEBF9F1)
+                              : const Color(0xffffcfcf),
+                          border: Border.all(color: const Color(0xffEBF9F1)),
+                          borderRadius: BorderRadius.circular(22),
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 3, horizontal: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 16),
                           child: Text(
-                            'Aktif',
+                            member.status == 1 ? 'Aktif' : 'Tidak Aktif',
                             style: TextStyle(
-                              color:  Color(0xff1F9254),
+                              color: member.status == 1
+                                  ? const Color(0xff1F9254)
+                                  : const Color(0xff930000),
                               fontWeight: FontWeight.bold,
-                              fontSize: 12
+                              fontSize: 12,
                             ),
                           ),
                         ),
-                      ),    
+                      ),
                     ],
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-                const Text(
-                  "Riwayat Studi",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+              const Text(
+                "Riwayat Studi",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  "1. S1 - Informatika\n   Telkom University\n2. S2 - Informatika\n   Institut Teknologi Bandung",
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "1. S1 - Informatika\n   Telkom University\n2. S2 - Informatika\n   Institut Teknologi Bandung",
+                style: const TextStyle(
+                  fontSize: 12,
                 ),
+              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
