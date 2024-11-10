@@ -34,5 +34,20 @@ class MemberBloc extends Bloc<MemberEvent, MemberState> {
         emit(MemberState.error('Terjadi kesalahan saat memuat produk.'));
       }
     });
+    on<_Delete>((event, emit) async {
+      emit(const MemberState.loading());
+      try {
+        final result = await userRemoteDatasource.deleteMember(event.id);
+        result.fold(
+          (error) => emit(MemberState.error(error)),
+          (successMessage) {
+            members.removeWhere((member) => member.id == event.id);
+            emit(MemberState.success(List.from(members))); 
+          },
+        );
+      } catch (e) {
+        emit(MemberState.error('Terjadi kesalahan saat menghapus member.'));
+      }
+    });
   }
 }

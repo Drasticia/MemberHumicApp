@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:member_humic/core/constant/variable.dart';
 import 'package:member_humic/data/models/request/user_request_model.dart'; // Pastikan path ini benar
 
 class MemberDetailDialog extends StatelessWidget {
@@ -62,7 +64,9 @@ class MemberDetailDialog extends StatelessWidget {
                         const SizedBox(height: 12),
                         _buildMemberInfoRow(
                           'Nomor HP',
-                          member.handphone == 0 ? '' : member.handphone.toString(),
+                          member.handphone == 0
+                              ? ''
+                              : member.handphone.toString(),
                         ),
                         const SizedBox(height: 12),
                         _buildMemberInfoRow(
@@ -77,7 +81,8 @@ class MemberDetailDialog extends StatelessWidget {
                         _buildMemberInfoRow(
                           'Tanggal Lahir',
                           member.birthday != null
-                              ? DateFormat('dd MMMM yyyy').format(member.birthday)
+                              ? DateFormat('dd MMMM yyyy')
+                                  .format(member.birthday)
                               : '',
                         ),
                       ],
@@ -90,25 +95,33 @@ class MemberDetailDialog extends StatelessWidget {
                         width: 110,
                         height: 140,
                         decoration: BoxDecoration(
-                          color: Colors
-                              .grey[200],
-                          image: member.profilePicture.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(member.profilePicture),
-                                  fit: BoxFit.cover,
-                                )
-                              : null, 
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: member.profilePicture.isEmpty
-                            ? Center(
-                                child: Icon(
-                                  Icons.person,
-                                  size: 50, 
-                                  color: Colors
-                                      .grey[600],
+                        child: member.profilePicture.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: "${Variables.imageBaseUrl}${member.profilePicture}",
+                                width: 110,
+                                height: 140,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                errorWidget: (context, url, error) => Center(
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                               )
-                            : null,
+                            : Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
                       ),
                       const SizedBox(height: 8),
                       Container(

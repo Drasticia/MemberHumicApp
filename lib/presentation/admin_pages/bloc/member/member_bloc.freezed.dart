@@ -16,12 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$MemberEvent {
-  int get page => throw _privateConstructorUsedError;
-  int get entriesPerPage => throw _privateConstructorUsedError;
-  String? get searchQuery => throw _privateConstructorUsedError;
-  String? get selectedProdi => throw _privateConstructorUsedError;
-  String? get selectedFaculty => throw _privateConstructorUsedError;
-  String? get selectedBranch => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -32,6 +26,7 @@ mixin _$MemberEvent {
             String? selectedFaculty,
             String? selectedBranch)
         fetch,
+    required TResult Function(int id) delete,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -44,6 +39,7 @@ mixin _$MemberEvent {
             String? selectedFaculty,
             String? selectedBranch)?
         fetch,
+    TResult? Function(int id)? delete,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -56,30 +52,28 @@ mixin _$MemberEvent {
             String? selectedFaculty,
             String? selectedBranch)?
         fetch,
+    TResult Function(int id)? delete,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Fetch value) fetch,
+    required TResult Function(_Delete value) delete,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Fetch value)? fetch,
+    TResult? Function(_Delete value)? delete,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Fetch value)? fetch,
+    TResult Function(_Delete value)? delete,
     required TResult orElse(),
   }) =>
-      throw _privateConstructorUsedError;
-
-  /// Create a copy of MemberEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $MemberEventCopyWith<MemberEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -88,14 +82,6 @@ abstract class $MemberEventCopyWith<$Res> {
   factory $MemberEventCopyWith(
           MemberEvent value, $Res Function(MemberEvent) then) =
       _$MemberEventCopyWithImpl<$Res, MemberEvent>;
-  @useResult
-  $Res call(
-      {int page,
-      int entriesPerPage,
-      String? searchQuery,
-      String? selectedProdi,
-      String? selectedFaculty,
-      String? selectedBranch});
 }
 
 /// @nodoc
@@ -110,52 +96,13 @@ class _$MemberEventCopyWithImpl<$Res, $Val extends MemberEvent>
 
   /// Create a copy of MemberEvent
   /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? page = null,
-    Object? entriesPerPage = null,
-    Object? searchQuery = freezed,
-    Object? selectedProdi = freezed,
-    Object? selectedFaculty = freezed,
-    Object? selectedBranch = freezed,
-  }) {
-    return _then(_value.copyWith(
-      page: null == page
-          ? _value.page
-          : page // ignore: cast_nullable_to_non_nullable
-              as int,
-      entriesPerPage: null == entriesPerPage
-          ? _value.entriesPerPage
-          : entriesPerPage // ignore: cast_nullable_to_non_nullable
-              as int,
-      searchQuery: freezed == searchQuery
-          ? _value.searchQuery
-          : searchQuery // ignore: cast_nullable_to_non_nullable
-              as String?,
-      selectedProdi: freezed == selectedProdi
-          ? _value.selectedProdi
-          : selectedProdi // ignore: cast_nullable_to_non_nullable
-              as String?,
-      selectedFaculty: freezed == selectedFaculty
-          ? _value.selectedFaculty
-          : selectedFaculty // ignore: cast_nullable_to_non_nullable
-              as String?,
-      selectedBranch: freezed == selectedBranch
-          ? _value.selectedBranch
-          : selectedBranch // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
 }
 
 /// @nodoc
-abstract class _$$FetchImplCopyWith<$Res>
-    implements $MemberEventCopyWith<$Res> {
+abstract class _$$FetchImplCopyWith<$Res> {
   factory _$$FetchImplCopyWith(
           _$FetchImpl value, $Res Function(_$FetchImpl) then) =
       __$$FetchImplCopyWithImpl<$Res>;
-  @override
   @useResult
   $Res call(
       {int page,
@@ -285,6 +232,7 @@ class _$FetchImpl implements _Fetch {
             String? selectedFaculty,
             String? selectedBranch)
         fetch,
+    required TResult Function(int id) delete,
   }) {
     return fetch(page, entriesPerPage, searchQuery, selectedProdi,
         selectedFaculty, selectedBranch);
@@ -301,6 +249,7 @@ class _$FetchImpl implements _Fetch {
             String? selectedFaculty,
             String? selectedBranch)?
         fetch,
+    TResult? Function(int id)? delete,
   }) {
     return fetch?.call(page, entriesPerPage, searchQuery, selectedProdi,
         selectedFaculty, selectedBranch);
@@ -317,6 +266,7 @@ class _$FetchImpl implements _Fetch {
             String? selectedFaculty,
             String? selectedBranch)?
         fetch,
+    TResult Function(int id)? delete,
     required TResult orElse(),
   }) {
     if (fetch != null) {
@@ -330,6 +280,7 @@ class _$FetchImpl implements _Fetch {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Fetch value) fetch,
+    required TResult Function(_Delete value) delete,
   }) {
     return fetch(this);
   }
@@ -338,6 +289,7 @@ class _$FetchImpl implements _Fetch {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Fetch value)? fetch,
+    TResult? Function(_Delete value)? delete,
   }) {
     return fetch?.call(this);
   }
@@ -346,6 +298,7 @@ class _$FetchImpl implements _Fetch {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Fetch value)? fetch,
+    TResult Function(_Delete value)? delete,
     required TResult orElse(),
   }) {
     if (fetch != null) {
@@ -364,24 +317,178 @@ abstract class _Fetch implements MemberEvent {
       final String? selectedFaculty,
       final String? selectedBranch}) = _$FetchImpl;
 
-  @override
   int get page;
-  @override
   int get entriesPerPage;
-  @override
   String? get searchQuery;
-  @override
   String? get selectedProdi;
-  @override
   String? get selectedFaculty;
-  @override
   String? get selectedBranch;
 
   /// Create a copy of MemberEvent
   /// with the given fields replaced by the non-null parameter values.
-  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FetchImplCopyWith<_$FetchImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeleteImplCopyWith<$Res> {
+  factory _$$DeleteImplCopyWith(
+          _$DeleteImpl value, $Res Function(_$DeleteImpl) then) =
+      __$$DeleteImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int id});
+}
+
+/// @nodoc
+class __$$DeleteImplCopyWithImpl<$Res>
+    extends _$MemberEventCopyWithImpl<$Res, _$DeleteImpl>
+    implements _$$DeleteImplCopyWith<$Res> {
+  __$$DeleteImplCopyWithImpl(
+      _$DeleteImpl _value, $Res Function(_$DeleteImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of MemberEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+  }) {
+    return _then(_$DeleteImpl(
+      null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DeleteImpl implements _Delete {
+  const _$DeleteImpl(this.id);
+
+  @override
+  final int id;
+
+  @override
+  String toString() {
+    return 'MemberEvent.delete(id: $id)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteImpl &&
+            (identical(other.id, id) || other.id == id));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id);
+
+  /// Create a copy of MemberEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteImplCopyWith<_$DeleteImpl> get copyWith =>
+      __$$DeleteImplCopyWithImpl<_$DeleteImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(
+            int page,
+            int entriesPerPage,
+            String? searchQuery,
+            String? selectedProdi,
+            String? selectedFaculty,
+            String? selectedBranch)
+        fetch,
+    required TResult Function(int id) delete,
+  }) {
+    return delete(id);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(
+            int page,
+            int entriesPerPage,
+            String? searchQuery,
+            String? selectedProdi,
+            String? selectedFaculty,
+            String? selectedBranch)?
+        fetch,
+    TResult? Function(int id)? delete,
+  }) {
+    return delete?.call(id);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(
+            int page,
+            int entriesPerPage,
+            String? searchQuery,
+            String? selectedProdi,
+            String? selectedFaculty,
+            String? selectedBranch)?
+        fetch,
+    TResult Function(int id)? delete,
+    required TResult orElse(),
+  }) {
+    if (delete != null) {
+      return delete(id);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Fetch value) fetch,
+    required TResult Function(_Delete value) delete,
+  }) {
+    return delete(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Fetch value)? fetch,
+    TResult? Function(_Delete value)? delete,
+  }) {
+    return delete?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Fetch value)? fetch,
+    TResult Function(_Delete value)? delete,
+    required TResult orElse(),
+  }) {
+    if (delete != null) {
+      return delete(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Delete implements MemberEvent {
+  const factory _Delete(final int id) = _$DeleteImpl;
+
+  int get id;
+
+  /// Create a copy of MemberEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteImplCopyWith<_$DeleteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

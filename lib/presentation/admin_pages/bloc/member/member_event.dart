@@ -10,4 +10,6 @@ class MemberEvent with _$MemberEvent {
     String? selectedFaculty,
     String? selectedBranch,
   }) = _Fetch;
+
+  const factory MemberEvent.delete(int id) = _Delete;
 }

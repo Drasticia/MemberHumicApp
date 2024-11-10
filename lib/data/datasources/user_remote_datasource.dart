@@ -51,4 +51,66 @@ class UserRemoteDatasource {
       return left('Terjadi kesalahan saat memuat data produk.');
     }
   }
+  Future<Either<String, String>> addMember({
+    required String name,
+    required String username,
+    required String email,
+    required String branch,
+    required String password,
+    required String retypePassword,
+  }) async {
+    try {
+      final uri = Uri.parse('${Variables.baseUrl}/api/members');
+      final authData = await AuthLocalDatasource().getAuthData();
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': name,
+          'username': username,
+          'email': email,
+          'branch': branch,
+          'password': password,
+          'retype_password': retypePassword,
+        }),
+      );
+
+      // Logging status dan body response untuk debugging
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 201) {
+        return right('Member successfully added.');
+      } else {
+        // Return error message from the response body if available
+        final errorResponse = jsonDecode(response.body);
+        return left(errorResponse['error'] ?? 'Failed to add member.');
+      }
+    } catch (e) {
+      print('Error: $e');
+      return left('Terjadi kesalahan saat menambahkan member.');
+    }
+  }
+  Future<Either<String, String>> deleteMember(int id) async {
+    try {
+      final authData = await AuthLocalDatasource().getAuthData();
+      final response = await http.delete(
+        Uri.parse('${Variables.baseUrl}/api/members/$id'),
+        headers: {
+          'Authorization': 'Bearer ${authData.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return right("Member deleted successfully.");
+      } else {
+        return left("Failed to delete member: ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      return left("An error occurred: $e");
+    }
+  }
 }

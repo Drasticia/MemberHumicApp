@@ -55,6 +55,33 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
       _fetchMembers();
     }
   }
+  void _deleteMember(int memberId) {
+    context.read<MemberBloc>().add(MemberEvent.delete(memberId));
+  }
+
+  void _confirmDelete(BuildContext context, int memberId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete this member?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Tutup dialog
+              _deleteMember(memberId); // Panggil fungsi delete
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -314,6 +341,7 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                   6: FixedColumnWidth(100.0),
                   7: FixedColumnWidth(100.0),
                   8: FixedColumnWidth(100.0),
+                  9: FixedColumnWidth(100.0),
                 },
                 border: TableBorder.all(color: Colors.grey),
                 children: [
@@ -365,6 +393,11 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                       Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text('DETAIL',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                      Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('Delete',
                               textAlign: TextAlign.center,
                               style: TextStyle(fontWeight: FontWeight.bold))),
                     ],
@@ -433,6 +466,21 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                                       fontWeight: FontWeight.bold)),
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextButton(
+                              onPressed: () {
+                                _confirmDelete(context, member.id);
+                              },
+                              child: const Text(
+                                'Delete',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          )
                         ],
                       )),
                 ],
