@@ -414,7 +414,7 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                                   textAlign: TextAlign.center)),
                           Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(member.username,
+                              child: Text(member.code,
                                   textAlign: TextAlign.center)),
                           Padding(
                               padding: const EdgeInsets.all(8.0),

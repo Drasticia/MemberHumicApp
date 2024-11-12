@@ -1,708 +1,226 @@
-import 'package:flutter/material.dart';
-import 'package:member_humic/presentation/member_pages/widgets/edititem.dart';
+import 'dart:typed_data';
 
-class Editprofile extends StatefulWidget {
-  const Editprofile({super.key});
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:member_humic/presentation/member_pages/bloc/profile/profile_bloc.dart';
+import '../../../data/models/respons/userprofile_model.dart';
+XFile? _pickedFile;
+class EditProfile extends StatefulWidget {
+  final Data user;
+
+  const EditProfile({super.key, required this.user});
 
   @override
-  State<Editprofile> createState() => _EditprofileState();
+  State<EditProfile> createState() => _EditProfileState();
 }
 
-class _EditprofileState extends State<Editprofile> {
-  final _nameController =
-      TextEditingController(text: 'Amila Nafila Vidyana, S.I.Kom');
-  final _nipController = TextEditingController(text: '333333');
-  final _facultyController = TextEditingController(text: 'Informatika');
-  final _programStudyController = TextEditingController(text: 'Informatika');
-  final _phoneNumberController = TextEditingController(text: '081244557898');
+class _EditProfileState extends State<EditProfile> {
+  late TextEditingController nameController;
+  late TextEditingController nipController;
+  late TextEditingController facultyController;
+  late TextEditingController departmentController;
+  late TextEditingController phoneController;
+  late TextEditingController addressController;
+  late TextEditingController birthdayController;
+  late TextEditingController religionController;
+  late TextEditingController majorController;
+  late TextEditingController institutionController;
+  String selectedLevel = 'S1';
+  List<EduBackground> eduBackgroundList = [];
+  Uint8List? profileImageBytes;
 
-  final _addressController = TextEditingController(text: 'Bogor');
-  final _dateOfBirthController = TextEditingController(text: '1997-03-14');
+  final ImagePicker _picker = ImagePicker();
 
-  String? _selectedGender = 'Perempuan';
-  String? _selectedReligion = 'Muslim';
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.user.name);
+    nipController = TextEditingController(text: widget.user.NIP.toString());
+    facultyController = TextEditingController(text: widget.user.faculty);
+    departmentController = TextEditingController(text: widget.user.department);
+    phoneController = TextEditingController(text: widget.user.handphone.toString());
+    addressController = TextEditingController(text: widget.user.address);
+    birthdayController = TextEditingController(text: widget.user.birthday);
+    religionController = TextEditingController(text: widget.user.religion);
+    majorController = TextEditingController();
+    institutionController = TextEditingController();
+    eduBackgroundList = widget.user.eduBackground;
+  }
 
-  final List<String> _genderList = ['Perempuan', 'Laki-laki'];
-  final List<String> _religionList = ['Muslim', 'Kristen', 'Budha', 'Hindu'];
-
-  List<Map<String, String>> _educations = [
-    {
-      'degree': 'S1',
-      'studyProgram': 'Informatika',
-      'university': 'Universitas Telkom'
+  void _onSave() {
+    if (nameController.text.isEmpty ||
+        nipController.text.isEmpty ||
+        facultyController.text.isEmpty ||
+        departmentController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        birthdayController.text.isEmpty ||
+        religionController.text.isEmpty ||
+        addressController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("All fields are required.")),
+      );
+      return;
     }
-  ];
 
-  final List<String> _degreeOptions = ['S1', 'S2', 'S3'];
+    final updatedUser = {
+      'id': widget.user.id,
+      'name': nameController.text,
+      'NIP': nipController.text,
+      'faculty': facultyController.text,
+      'department': departmentController.text,
+      'handphone': phoneController.text,
+      'birthday': birthdayController.text,
+      'gender': widget.user.gender,
+      'religion': religionController.text,
+      'address': addressController.text,
+      'eduBackground': eduBackgroundList.map((e) => e.toJson()).toList(),
+    };
 
-  void _addEducation() {
+    // Menyertakan `profileImageBytes` jika ada
+    String? profilePicturePath;
+    if (_pickedFile != null) {
+      profilePicturePath = _pickedFile!.path;
+    }
+
+    context.read<ProfileBloc>().add(ProfileEvent.updateProfile(updatedUser, profilePicturePath));
+  }
+
+  void _addEduBackground() {
     setState(() {
-      _educations.add({'degree': 'S1', 'studyProgram': '', 'university': ''});
+      eduBackgroundList.add(EduBackground(
+        level: selectedLevel,
+        major: majorController.text,
+        institution: institutionController.text,
+      ));
+      majorController.clear();
+      institutionController.clear();
     });
   }
 
-  void _removeEducation(int index) {
-    setState(() {
-      _educations.removeAt(index);
-    });
+  Future<void> _pickProfileImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        profileImageBytes = bytes;
+        _pickedFile = pickedFile;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Color(0xff800C05), Color(0xffE91407)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
-          child: const Text(
-            'Dashboard',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2.0),
-          child: Container(
-            color: const Color(0xff000000).withOpacity(0.1),
-            height: 1,
-          ),
-        ),
+        title: const Text("Edit Profile"),
+        backgroundColor: const Color(0xff006AFF),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.25),
-                  blurRadius: 4,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "EDIT PROFILE",
-                    style: TextStyle(
-                      color: Color(0xffE91407),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 32,
-                  ),
-                  Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 16.0),
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Container(
-                            width: 120,
-                            height: 160,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    'https://humic.telkomuniversity.ac.id/wp-content/uploads/2024/05/amilaa-1.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.edit_square,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: const Color(0xffEBF9F1),
-                          border: Border.all(color: const Color(0xffEBF9F1)),
-                          borderRadius: BorderRadius.circular(22)),
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 3, horizontal: 20),
-                        child: Text(
-                          'Aktif',
-                          style: TextStyle(
-                              color: Color(0xff1F9254),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "Nama Lengkap",
-                    widget: TextFormField(
-                      controller: _nameController,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Nama tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "NIP",
-                    widget: TextFormField(
-                      controller: _nipController,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'NIP tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Fakultas",
-                    widget: TextFormField(
-                      controller: _facultyController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Fakultas tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Program Studi",
-                    widget: TextFormField(
-                      controller: _programStudyController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Program Studi tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Nomor Hp",
-                    widget: TextFormField(
-                      controller: _phoneNumberController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Nomor Telepon tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Agama",
-                    widget: DropdownButtonFormField<String>(
-                      value: _selectedReligion,
-                      items: _religionList.map((String religion) {
-                        return DropdownMenuItem<String>(
-                          value: religion,
-                          child: Text(
-                            religion,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedReligion = newValue;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Jenis Kelamin",
-                    widget: DropdownButtonFormField<String>(
-                      value: _selectedGender,
-                      items: _genderList.map((String gender) {
-                        return DropdownMenuItem<String>(
-                          value: gender,
-                          child: Text(
-                            gender,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedGender = newValue;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Alamat Asal",
-                    widget: TextFormField(
-                      controller: _addressController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Alamat tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  EditItem(
-                    title: "Tanggal Lahir",
-                    widget: TextFormField(
-                      controller: _dateOfBirthController,
-                      readOnly: true,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          state.maybeWhen(
+            updated: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Profile updated successfully")),
+              );
+              Navigator.pop(context);
+            },
+            error: (message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+            },
+            orElse: () {},
+          );
+        },
+        builder: (context, state) {
+          if (state is Loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return _buildForm();
+        },
+      ),
+    );
+  }
 
-                        if (pickedDate != null) {
-                          setState(() {
-                            _dateOfBirthController.text =
-                                "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
-                          });
-                        }
-                      },
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        labelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Riwayat Studi',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _educations.length,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: DropdownButtonFormField<String>(
-                              value: _educations[index]['degree'],
-                              items: _degreeOptions.map((String degree) {
-                                return DropdownMenuItem<String>(
-                                  value: degree,
-                                  child: Text(
-                                    degree,
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 12),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _educations[index]['degree'] = newValue!;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Pendidikan",
-                                labelStyle: const TextStyle(
-                                    color: Colors.black, fontSize: 12),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 3,
-                            child: TextFormField(
-                              initialValue: _educations[index]['studyProgram'],
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _educations[index]['studyProgram'] = newValue;
-                                });
-                              },
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 12),
-                              decoration: InputDecoration(
-                                labelText: "Program Studi",
-                                labelStyle: const TextStyle(
-                                    color: Colors.black, fontSize: 12),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 3,
-                            child: TextFormField(
-                              initialValue: _educations[index]['university'],
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _educations[index]['university'] = newValue;
-                                });
-                              },
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 12),
-                              decoration: InputDecoration(
-                                labelText: "Universitas",
-                                labelStyle: const TextStyle(
-                                    color: Colors.black, fontSize: 12),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              _removeEducation(index);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color(0xff9E9E9E),
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: IconButton(
-                        onPressed: _addEducation, 
-                        icon: const Icon(Icons.add),
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      label: const Text(
-                        'Edit',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff006AFF),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 150, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+  Widget _buildForm() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView(
+        children: [
+          Center(
+            child: GestureDetector(
+              onTap: _pickProfileImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: profileImageBytes != null
+                    ? MemoryImage(profileImageBytes!)
+                    : CachedNetworkImageProvider(widget.user.profilePicture) as ImageProvider,
+                child: profileImageBytes == null ? const Icon(Icons.camera_alt) : null,
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          _buildTextField("Nama Lengkap", nameController),
+          _buildTextField("NIP", nipController, isNumber: true),
+          _buildTextField("Fakultas", facultyController),
+          _buildTextField("Program Studi", departmentController),
+          _buildTextField("Nomor HP", phoneController, isNumber: true),
+          _buildTextField("Alamat", addressController),
+          _buildTextField("Tanggal Lahir (YYYY-MM-DD)", birthdayController),
+          _buildTextField("Agama", religionController),
+          const SizedBox(height: 24),
+          const Text("Riwayat Studi", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          DropdownButtonFormField<String>(
+            value: selectedLevel,
+            items: ['S1', 'S2', 'S3']
+                .map((level) => DropdownMenuItem(value: level, child: Text(level)))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                selectedLevel = value!;
+              });
+            },
+            decoration: const InputDecoration(labelText: "Level"),
+          ),
+          _buildTextField("Jurusan", majorController),
+          _buildTextField("Institusi", institutionController),
+          ElevatedButton(
+            onPressed: _addEduBackground,
+            child: const Text("Tambah Riwayat Studi"),
+          ),
+          const SizedBox(height: 24),
+          ...eduBackgroundList.map((edu) => ListTile(
+                title: Text('${edu.level} - ${edu.major}'),
+                subtitle: Text(edu.institution),
+              )),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: _onSave,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xffE91407),
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text("Save Changes", style: TextStyle(fontSize: 16)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
     );

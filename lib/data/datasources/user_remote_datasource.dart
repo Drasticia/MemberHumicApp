@@ -16,7 +16,6 @@ class UserRemoteDatasource {
     String? selectedBranch,
   }) async {
     try {
-      // Membuat URI dengan query parameters
       final queryParams = {
         'page': page.toString(),
         'limit': entriesPerPage.toString(),
@@ -27,7 +26,6 @@ class UserRemoteDatasource {
       };
       final uri = Uri.parse('${Variables.baseUrl}/api/members').replace(queryParameters: queryParams);
 
-      // Mendapatkan token dari AuthLocalDatasource
       final authData = await AuthLocalDatasource().getAuthData();
       final response = await http.get(
         uri,

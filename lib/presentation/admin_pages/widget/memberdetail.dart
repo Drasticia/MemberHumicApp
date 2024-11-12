@@ -80,10 +80,9 @@ class MemberDetailDialog extends StatelessWidget {
                         const SizedBox(height: 12),
                         _buildMemberInfoRow(
                           'Tanggal Lahir',
-                          member.birthday != null
-                              ? DateFormat('dd MMMM yyyy')
-                                  .format(member.birthday)
-                              : '',
+                        member.birthday != null
+                          ? DateFormat('dd MMMM yyyy').format(member.birthday!)
+                          : '',
                         ),
                       ],
                     ),

@@ -41,7 +41,7 @@ class Member {
   final String religion;
   final int gender;
   final String address;
-  final DateTime birthday;
+  final DateTime? birthday;
   final int status;
   final int nip;
   final int position;
@@ -87,34 +87,35 @@ class Member {
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
         id: json["id"],
-        name: json["name"]?? '',
-        username: json["username"]?? '',
-        email: json["email"]?? '',
+        name: json["name"] ?? '',
+        username: json["username"] ?? '',
+        email: json["email"] ?? '',
         faculty: json["faculty"] ?? '',
         department: json["department"] ?? '',
         handphone: json["handphone"] ?? 0,
         religion: json["religion"] ?? '',
         gender: json["gender"] ?? 0,
         address: json["address"] ?? '',
-        birthday: json["birthday"] != null && json["birthday"] != ''
-            ? DateTime.parse(json["birthday"])
-            : DateTime(1970, 1, 1), // Default date if null
-        status: json["status"],
+        birthday: (json["birthday"] != null && json["birthday"].toString().isNotEmpty)
+          ? DateTime.tryParse(json["birthday"]) ?? DateTime(1970, 1, 1) // Default date if parsing fails
+          : null, // Set to null if empty or null
+
+        status: json["status"] ?? 0,
         nip: json["NIP"] ?? 0,
         position: json["position"] ?? 0,
         profilePicture: json["profile_picture"] ?? '',
         positionName: json["position_name"] ?? '',
         isAdmin: json["isAdmin"] ?? 0,
-        emailVerifiedAt: json["email_verified_at"] ,
-        code: json["code"],
-        branch: json["branch"]?? '',
+        emailVerifiedAt: json["email_verified_at"],
+        code: json["code"]??'',
+        branch: json["branch"] ?? '',
         createdAt: json["created_at"] != null && json["created_at"] != ''
-            ? DateTime.parse(json["created_at"])
+            ? DateTime.tryParse(json["created_at"]) // Nullable, uses null if parsing fails
             : null,
         updatedAt: json["updated_at"] != null && json["updated_at"] != ''
-            ? DateTime.parse(json["updated_at"])
+            ? DateTime.tryParse(json["updated_at"]) // Nullable, uses null if parsing fails
             : null,
-        deletedAt: json["deleted_at"] ?? '',
+        deletedAt: json["deleted_at"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -128,8 +129,9 @@ class Member {
         "religion": religion,
         "gender": gender,
         "address": address,
-        "birthday":
-            "${birthday.year.toString().padLeft(4, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.day.toString().padLeft(2, '0')}",
+        "birthday": birthday != null
+          ? "${birthday!.year.toString().padLeft(4, '0')}-${birthday!.month.toString().padLeft(2, '0')}-${birthday!.day.toString().padLeft(2, '0')}"
+          : null,
         "status": status,
         "NIP": nip,
         "position": position,

@@ -1,4 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:member_humic/core/constant/variable.dart';
+import 'package:member_humic/data/datasources/announcementmember_service.dart';
+import 'package:member_humic/presentation/member_pages/bloc/announcement/announcement_bloc.dart';
 
 class AnnouncementpageMember extends StatefulWidget {
   const AnnouncementpageMember({super.key});
@@ -8,14 +14,6 @@ class AnnouncementpageMember extends StatefulWidget {
 }
 
 class _AnnouncementpageMemberState extends State<AnnouncementpageMember> {
-  final List<String> announcement = [
-    "Kami dengan bangga mengumumkan bahwa HUMIC Engineering telah memenangkan penghargaan 'Inovasi Teknologi Terbaik 2024'",
-    "Jangan lewatkan seminar 'Masa Depan HMI: Peluang dan Tantangan' pada tanggal 15 November 2024. Pendaftaran dibuka hingga 10 November!",
-    "Perubahan Kebijakan: Mulai bulan depan, semua anggota diharapkan untuk memperbarui informasi kontak mereka setiap 6 bulan",
-    "Hasil Riset: Publikasi terbaru tentang 'Analisis Kinerja IoT di Sektor Kesehatan' telah diterbitkan.",
-    "Kami meluncurkan program mentoring untuk anggota baru. Daftar sekarang untuk mendapatkan bimbingan dari ahli industri",
-    "Kami meluncurkan program mentoring untuk anggota baru. Daftar sekarang untuk mendapatkan bimbingan dari ahli industri"
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,69 +45,95 @@ class _AnnouncementpageMemberState extends State<AnnouncementpageMember> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: Colors.black.withOpacity(0.2),
-            //     blurRadius: 6,
-            //     offset: const Offset(0, 4),
-            //   ),
-            // ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // const Text(
-              //   "Notifikasi",
-              //   style: TextStyle(
-              //     color: Colors.black,
-              //     fontWeight: FontWeight.bold,
-              //     fontSize: 18,
-              //   ),
-              // ),
-              ...announcement.map((notification) => Padding(
+      body: BlocProvider(
+        create: (context) => AnnouncementBloc(AnnouncementServiceMember('https://api.example.com'))
+          ..add(FetchAnnouncements()), // Trigger fetching announcements
+        child: BlocBuilder<AnnouncementBloc, AnnouncementState>(
+          builder: (context, state) {
+            return state.when(
+              initial: () => Center(child: Text('Welcome to Announcements')),
+              loading: () => Center(child: CircularProgressIndicator()),
+              loaded: (announcements) => ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: announcements.length,
+                itemBuilder: (context, index) {
+                  final announcement = announcements[index];
+                  return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
                         color: const Color(0xffF8ECEC),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: const Color(0xffB9B9B9)),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          notification,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.start,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              announcement.title,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            if (announcement.images.isNotEmpty)
+                              SizedBox(
+                                height: 200,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: announcement.images.length,
+                                  itemBuilder: (context, imgIndex) {
+                                    final image = announcement.images[imgIndex];
+                                    final imageUrl = "${Variables.imageBaseUrl}${image.image}";
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: LayoutBuilder(
+                                        builder: (context, constraints){
+                                          final screenWidth = MediaQuery.of(context).size.width;
+                                          return CachedNetworkImage(
+                                            imageUrl: imageUrl,
+                                            width: screenWidth * 0.8,
+                                            placeholder: (context, url) => const Center(
+                                              child: CircularProgressIndicator(),
+                                            ),
+                                            errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.red),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            const SizedBox(height: 8),
+                            Text(
+                              announcement.desc,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${DateFormat('yyyy-MM-dd').format(announcement.date)} ${announcement.time}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )),
-              const SizedBox(height: 16),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       Navigator.of(context).pop();
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: const Color(0xffE91407),
-              //     ),
-              //     child: const Text("Tutup"),
-              //   ),
-              // ),
-            ],
-          ),
+                  );
+                },
+              ),
+              error: (message) => Center(child: Text('Error: $message')),
+            );
+          },
         ),
       ),
     );

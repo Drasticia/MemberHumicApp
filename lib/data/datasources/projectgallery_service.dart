@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:member_humic/data/models/request/projectgallerymember_moder.dart';
 import 'package:member_humic/data/models/respons/projectgallery_respons_model.dart';
 import 'auth_local_datasource.dart';
 import 'package:member_humic/core/constant/variable.dart';
@@ -8,7 +11,6 @@ import 'package:member_humic/core/constant/variable.dart';
 class ProjectGalleryService {
   final AuthLocalDatasource authLocalDatasource = AuthLocalDatasource();
 
-  // Mendapatkan daftar project gallery
   Future<Either<String, List<Data>>> getProjectGalleryList() async {
   try {
     final uri = Uri.parse('${Variables.baseUrl}/api/project-gallery');
@@ -108,8 +110,6 @@ class ProjectGalleryService {
       final authData = await authLocalDatasource.getAuthData();
       final token = authData.token; // Pastikan token diambil sebagai string
 
-      print('Updating project gallery status for ID: $id with token: $token');
-
       final response = await http.put(
         uri,
         headers: {
@@ -138,6 +138,66 @@ class ProjectGalleryService {
       return left('Terjadi kesalahan: $e');
     }
   }
+  
+  Future<ProjectGalleryMemberModel> fetchProjectGallery() async {
+    final uri = Uri.parse('${Variables.baseUrl}/api/member/project-gallery');
+    final authData = await authLocalDatasource.getAuthData();
+    final token = authData.token;
 
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return ProjectGalleryMemberModel.fromRawJson(response.body);
+    } else {
+      throw Exception('Failed to load project gallery');
+    }
+  }
+
+  Future<ProjectGallery> addProjectGalleryItem({
+    required String title,
+    required String description,
+    required String date,
+    required File thumbnail,
+  }) async {
+    final uri = Uri.parse('${Variables.baseUrl}/api/member/project-gallery/add');
+    final authData = await authLocalDatasource.getAuthData();
+    final token = authData.token;
+
+    var request = http.MultipartRequest(
+      'POST',
+      uri,
+    );
+
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.fields['title'] = title;
+    request.fields['description'] = description;
+    request.fields['date'] = date;
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'thumbnail',
+        thumbnail.path,
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
+
+    // Mengirim request
+    final response = await request.send();
+
+    // Mengecek respons dari server
+    if (response.statusCode == 200) {
+      final responseBody = await response.stream.bytesToString();
+      final json = jsonDecode(responseBody);
+      return ProjectGallery.fromJson(json['project_gallery']);
+    } else {
+      throw Exception('Failed to add project gallery item');
+    }
+  }
 
 }

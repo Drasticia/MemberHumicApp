@@ -1,6 +1,8 @@
-import 'dart:ui';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:member_humic/core/constant/variable.dart';
+import 'package:member_humic/presentation/member_pages/bloc/profile/profile_bloc.dart';
 import 'package:member_humic/presentation/member_pages/dashboardpages/editprofile.dart';
 import 'package:member_humic/presentation/member_pages/widgets/profilerow.dart';
 
@@ -12,292 +14,299 @@ class DashboardpageMember extends StatefulWidget {
 }
 
 class _DashboardpageMemberState extends State<DashboardpageMember> {
-  final List<String> notifications = [
-    "Proyek 'Smart City Development' telah diperbarui. Cek status terbaru di dashboard Anda",
-    "Anda telah menerima umpan balik dari Project Approval Project website beasiswa Telkom University. Klik di sini untuk melihat",
-    "Pembaruan Data: Anda telah berhasil mengubah data anda. Jika ini bukan permintaan Anda, silakan hubungi dukungan.",
-    "Terima kasih telah berpartisipasi dalam survei kepuasan anggota. Hasilnya akan diumumkan dalam waktu dekat!",
-    "Terima kasih telah berpartisipasi dalam survei kepuasan anggota. Hasilnya akan diumumkan dalam waktu dekat!"
-  ];
-
-  void _showNotificationPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0),
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(16),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black.withOpacity(0.2),
-                //     blurRadius: 6,
-                //     offset: const Offset(0, 4),
-                //   ),
-                // ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // const Text(
-                  //   "Notifikasi",
-                  //   style: TextStyle(
-                  //     color: Colors.black,
-                  //     fontWeight: FontWeight.bold,
-                  //     fontSize: 18,
-                  //   ),
-                  // ),
-                  ...notifications.map((notification) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            color: const Color(0xffF8ECEC),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: const Color(0xffB9B9B9)
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              notification, 
-                              style: const TextStyle(
-                                fontSize: 16, 
-                                color: Colors.black,
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                        ),
-                      )
-                    ),
-                  const SizedBox(height: 16),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //       Navigator.of(context).pop();
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: const Color(0xffE91407),
-                  //     ),
-                  //     child: const Text("Tutup"),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Trigger Profile Event to fetch profile data when the page loads
+    context.read<ProfileBloc>().add(const ProfileEvent.fetchProfile());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Color(0xff800C05), Color(0xffE91407)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
-          child: const Text(
-            'Dashboard',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _showNotificationPopup(context);
-            },
-            icon: const Icon(
-              Icons.notifications_none_outlined,
-              color: Color(0xff171717),
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2.0),
-          child: Container(
-            color: const Color(0xff000000).withOpacity(0.1),
-            height: 1,
+      appBar: _buildAppBar(),
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          return state.when(
+            initial: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            loaded: (userProfile) => _buildProfileContent(userProfile.data),
+            error: (message) => _buildErrorState(message),
+            updated: () => _buildUpdateState(),
+          );
+        },
+      )
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: ShaderMask(
+        shaderCallback: (bounds) => const LinearGradient(
+          colors: [Color(0xff800C05), Color(0xffE91407)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+        child: const Text(
+          'Dashboard',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 4,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.notifications_none_outlined,
+            color: Color(0xff171717),
+            size: 24,
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "PROFILE",
-                  style: TextStyle(
-                    color: Color(0xffE91407),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
+        ),
+        const SizedBox(width: 16),
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(2.0),
+        child: Container(
+          color: const Color(0xff000000).withOpacity(0.1),
+          height: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileContent(dynamic user) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 4,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ProfileRow(
-                            label: "Nama Lengkap",
-                            value: "Amila Nafila Vidyana, S.I.Kom",
-                          ),
-                          SizedBox(height: 12),
-                          ProfileRow(label: "NIP", value: "333333"),
-                          SizedBox(height: 12),
-                          ProfileRow(label: "Fakultas", value: "Informatika"),
-                          SizedBox(height: 12),
-                          ProfileRow(
-                              label: "Program Studi", value: "Informatika"),
-                          SizedBox(height: 12),
-                          ProfileRow(
-                              label: "Nomor HP", value: "081244557898"),
-                          SizedBox(height: 12),
-                          ProfileRow(
-                              label: "Jenis Kelamin", value: "Perempuan"),
-                          SizedBox(height: 12),
-                          ProfileRow(label: "Agama", value: "Muslim"),
-                          SizedBox(height: 12),
-                          ProfileRow(label: "Alamat Asal", value: "Bogor"),
-                          SizedBox(height: 12),
-                          ProfileRow(
-                              label: "Tanggal Lahir", value: "1997-03-14"),
-                        ],
+                    const Text(
+                      "PROFILE",
+                      style: TextStyle(
+                        color: Color(0xffE91407),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Column(
-                      children: [
-                        Container(
-                          width: 110,
-                          height: 140,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                  'https://humic.telkomuniversity.ac.id/wp-content/uploads/2024/05/amilaa-1.png'),
-                              fit: BoxFit.cover,
+                    const SizedBox(height: 16),
+                    ProfileRow(label: "Nama Lengkap", value: user.name),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "NIP", value: user.NIP.toString()),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "Fakultas", value: user.faculty),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "Program Studi", value: user.department),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "Nomor HP", value: user.handphone.toString()),
+                    const SizedBox(height: 12),
+                    ProfileRow(
+                      label: "Jenis Kelamin",
+                      value: user.gender == 1 ? "Laki-laki" : "Perempuan",
+                    ),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "Agama", value: user.religion),
+                    const SizedBox(height: 12),
+                    ProfileRow(label: "Alamat Asal", value: user.address),
+                    const SizedBox(height: 12),
+                    ProfileRow(
+                      label: "Tanggal Lahir",
+                      value: user.birthday != null
+                          ? user.birthday!.toString().split(' ')[0]
+                          : "Tanggal tidak tersedia",
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Riwayat Studi",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildEducationHistory(user),
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfile(user: user),
                             ),
-                          ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                          size: 24,
                         ),
-                        const SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xffEBF9F1),
-                            border: Border.all(
-                              color: const Color(0xffEBF9F1)
-                            ),
-                            borderRadius: BorderRadius.circular(22)
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 3, horizontal: 16),
-                            child: Text(
-                              'Aktif',
-                              style: TextStyle(
-                                color:  Color(0xff1F9254),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12
-                              ),
-                            ),
-                          ),
-                        ),    
-                      ],
+                        label: const Text(
+                          'Edit',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff006AFF),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                const Text(
-                  "Riwayat Studi",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "1. S1 - Informatika\n   Telkom University\n2. S2 - Informatika\n   Institut Teknologi Bandung",
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Center(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Editprofile(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                    label: const Text(
-                      'Edit',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff006AFF),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              _buildProfilePicture(user),
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildEducationHistory(dynamic user) {
+    if (user.eduBackground == null || user.eduBackground.isEmpty) {
+      return const Text(
+        "Tidak ada data riwayat studi.",
+        style: TextStyle(fontSize: 12),
+      );
+    }
+    return Column(
+      children: List<Widget>.from(
+        user.eduBackground.asMap().entries.map((entry) {
+          final index = entry.key + 1;
+          final edu = entry.value;
+          return Text(
+            "$index. ${edu.level} - ${edu.major}\n   ${edu.institution}",
+            style: const TextStyle(fontSize: 12),
+          );
+        }),
+      ),
+    );
+  }
+
+
+  Widget _buildProfilePicture(dynamic user) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 64),
+      child: Column(
+        children: [
+          Container(
+            width: 110,
+            height: 140,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: user.profilePicture != null && user.profilePicture.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: "${Variables.imageBaseUrl}${user.profilePicture}",
+                    width: 110,
+                    height: 140,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: user.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 16),
+              child: Text(
+                user.status == 1 ? 'Aktif' : 'Tidak Aktif',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: user.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            style: const TextStyle(color: Colors.red, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // Retry fetching profile data
+              context.read<ProfileBloc>().add(const ProfileEvent.fetchProfile());
+            },
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpdateState() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Profile updated successfully",
+          style: TextStyle(color: Colors.green, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            // Go back to profile page after update
+            Navigator.pop(context);
+          },
+          child: const Text('Back to Profile'),
+        ),
+      ],
+    ),
+  );
+}
 }

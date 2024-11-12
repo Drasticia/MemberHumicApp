@@ -35,7 +35,7 @@ class User {
     final String religion;
     final int gender;
     final String address;
-    final DateTime birthday;
+    final DateTime? birthday;
     final int status;
     final int nip;
     final int position;
@@ -45,8 +45,8 @@ class User {
     final dynamic emailVerifiedAt;
     final dynamic code;
     final String branch;
-    final DateTime createdAt;
-    final DateTime updatedAt;
+    final DateTime? createdAt;
+    final DateTime? updatedAt;
     final dynamic deletedAt;
 
     User({
@@ -60,19 +60,19 @@ class User {
         required this.religion,
         required this.gender,
         required this.address,
-        required this.birthday,
+        this.birthday,
         required this.status,
         required this.nip,
         required this.position,
         required this.profilePicture,
         required this.positionName,
         required this.isAdmin,
-        required this.emailVerifiedAt,
-        required this.code,
+        this.emailVerifiedAt,
+        this.code,
         required this.branch,
-        required this.createdAt,
-        required this.updatedAt,
-        required this.deletedAt,
+        this.createdAt,
+        this.updatedAt,
+        this.deletedAt,
     });
 
     factory User.fromRawJson(String str) => User.fromJson(json.decode(str));
@@ -80,29 +80,35 @@ class User {
     String toRawJson() => json.encode(toJson());
 
     factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json["id"],
-        name: json["name"],
-        username: json["username"],
-        email: json["email"],
-        faculty: json["faculty"],
-        department: json["department"],
-        handphone: json["handphone"],
-        religion: json["religion"],
-        gender: json["gender"],
-        address: json["address"],
-        birthday: DateTime.parse(json["birthday"]),
-        status: json["status"],
-        nip: json["NIP"],
-        position: json["position"],
-        profilePicture: json["profile_picture"],
-        positionName: json["position_name"],
-        isAdmin: json["isAdmin"],
-        emailVerifiedAt: json["email_verified_at"],
-        code: json["code"],
-        branch: json["branch"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        deletedAt: json["deleted_at"],
+        id: json["id"] ?? 0,
+        name: json["name"] ?? '',
+        username: json["username"] ?? '',
+        email: json["email"] ?? '',
+        faculty: json["faculty"] ?? '',
+        department: json["department"] ?? '',
+        handphone: json["handphone"] ?? 0,
+        religion: json["religion"] ?? '',
+        gender: json["gender"] ?? 0,
+        address: json["address"] ?? '',
+        birthday: json["birthday"] != null && json["birthday"] != ''
+            ? DateTime.tryParse(json["birthday"])
+            : null, // Set null if empty or null
+        status: json["status"] ?? 0,
+        nip: json["NIP"] ?? 0,
+        position: json["position"] ?? 0,
+        profilePicture: json["profile_picture"] ?? '',
+        positionName: json["position_name"] ?? '',
+        isAdmin: json["isAdmin"] ?? 0,
+        emailVerifiedAt: json["email_verified_at"] ?? '',
+        code: json["code"] ?? '',
+        branch: json["branch"] ?? '',
+        createdAt: json["created_at"] != null && json["created_at"] != ''
+            ? DateTime.tryParse(json["created_at"])
+            : null, // Set null if empty or null
+        updatedAt: json["updated_at"] != null && json["updated_at"] != ''
+            ? DateTime.tryParse(json["updated_at"])
+            : null, // Set null if empty or null
+        deletedAt: json["deleted_at"] ?? '',
     );
 
     Map<String, dynamic> toJson() => {
@@ -116,7 +122,9 @@ class User {
         "religion": religion,
         "gender": gender,
         "address": address,
-        "birthday": "${birthday.year.toString().padLeft(4, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.day.toString().padLeft(2, '0')}",
+        "birthday": birthday != null
+            ? "${birthday!.year.toString().padLeft(4, '0')}-${birthday!.month.toString().padLeft(2, '0')}-${birthday!.day.toString().padLeft(2, '0')}"
+            : null, // Set null if birthday is null
         "status": status,
         "NIP": nip,
         "position": position,
@@ -126,8 +134,8 @@ class User {
         "email_verified_at": emailVerifiedAt,
         "code": code,
         "branch": branch,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
         "deleted_at": deletedAt,
     };
 }

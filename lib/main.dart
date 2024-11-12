@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:member_humic/core/constant/variable.dart';
+import 'package:member_humic/data/datasources/auth_local_datasource.dart';
+import 'package:member_humic/data/datasources/home/projectg_service.dart';
+import 'package:member_humic/data/datasources/home/static_service.dart';
+import 'package:member_humic/data/datasources/memberhistory_service.dart';
+import 'package:member_humic/data/datasources/profile_service.dart';
 import 'package:member_humic/data/datasources/projectgallery_service.dart';
+import 'package:member_humic/data/datasources/projectgallerymember_service.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/addmember/addmember_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/announcement/announcement_bloc.dart';
+import 'package:member_humic/presentation/admin_pages/bloc/memberhistory/memberhistory_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/projectgallery/projectgallery_bloc.dart';
+import 'package:member_humic/presentation/landing_pages/bloc/ProjectG/project_g_bloc.dart';
+import 'package:member_humic/presentation/landing_pages/bloc/statistic/statistic_bloc.dart';
+import 'package:member_humic/presentation/member_pages/bloc/ProjectGalleryS/project_gallery_s_bloc.dart';
+import 'package:member_humic/presentation/member_pages/bloc/profile/profile_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:member_humic/data/datasources/auth_remote_datasource.dart';
 import 'package:member_humic/data/datasources/user_remote_datasource.dart';
@@ -11,7 +23,8 @@ import 'package:member_humic/presentation/admin_pages/bloc/member/member_bloc.da
 import 'package:member_humic/presentation/auth/bloc/login/login_bloc.dart';
 import 'package:member_humic/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/dashboard.dart';
-import 'package:member_humic/data/datasources/announcement_service.dart'; // Import AnnouncementService
+import 'package:member_humic/data/datasources/announcement_service.dart'; 
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -19,8 +32,10 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    
     return MultiProvider(
       providers: [
         Provider<UserRemoteDatasource>(
@@ -34,6 +49,27 @@ class MyApp extends StatelessWidget {
         ),
         Provider<ProjectGalleryService>(
           create: (_) => ProjectGalleryService(),
+        ),
+        Provider<AuthLocalDatasource>(
+          create: (_) => AuthLocalDatasource(),
+        ),
+        Provider<MemberHistoryService>(
+          create: (context) => MemberHistoryService(
+            Variables.baseUrl,
+            context.read<AuthLocalDatasource>(),
+          ),
+        ),
+        Provider<ProfileService>(
+          create: (context) => ProfileService(
+            Variables.baseUrl,
+            context.read<AuthLocalDatasource>(),
+          ),
+        ),
+        Provider<ProjectGalleryMemberService>(
+          create: (_) => ProjectGalleryMemberService(),
+        ),
+        Provider<StatisticsService>( 
+          create: (_) => StatisticsService(),
         ),
       ],
       child: MultiBlocProvider(
@@ -57,6 +93,25 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ProjectgalleryBloc>(
             create: (context) => ProjectgalleryBloc(context.read<ProjectGalleryService>()),
+          ),
+          BlocProvider<MemberhistoryBloc>(
+            create: (context) => MemberhistoryBloc(
+              memberHistoryService: context.read<MemberHistoryService>(),
+            ),
+          ),
+          BlocProvider<ProfileBloc>(
+            create: (context) => ProfileBloc(context.read<ProfileService>()),
+          ),
+          BlocProvider<ProjectGallerySBloc>(
+            create: (context) => ProjectGallerySBloc(
+              service: context.read<ProjectGalleryMemberService>(),
+            ),
+          ),
+          BlocProvider<ProjectGBloc>(
+            create: (context) => ProjectGBloc(ProjectGService())..add(ProjectGEvent.fetchApprovedProjects()),
+          ),
+          BlocProvider<StatisticBloc>(
+            create: (context) => StatisticBloc(context.read<StatisticsService>()),
           ),
         ],
         child: const MaterialApp(

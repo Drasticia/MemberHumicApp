@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:member_humic/data/models/respons/auth_response_model.dart';
+import 'package:member_humic/data/models/respons/userprofile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthLocalDatasource{
@@ -8,9 +9,15 @@ class AuthLocalDatasource{
     await prefs.setString('auth_data', jsonEncode(authResponseModel.toJson()));
   }
 
+  Future<void> saveUserProfile(UserProfile userProfile) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_profile', jsonEncode(userProfile.toJson()));
+  }
+
   Future<void> removeAuthData() async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_data');
+    await prefs.remove('user_profile');
   }
 
   Future<AuthResponseModel> getAuthData() async{
@@ -23,6 +30,7 @@ class AuthLocalDatasource{
       throw Exception('No auth data found');
     }
   }
+
 
   Future<bool> isAuth() async{
     final prefs = await SharedPreferences.getInstance();

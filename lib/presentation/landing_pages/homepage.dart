@@ -1,7 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:member_humic/core/constant/variable.dart';
 import 'package:member_humic/models/lmember.dart';
 import 'package:member_humic/models/member.dart';
 import 'package:member_humic/models/projectmodels.dart';
+import 'package:member_humic/presentation/landing_pages/bloc/ProjectG/project_g_bloc.dart';
+import 'package:member_humic/presentation/landing_pages/bloc/statistic/statistic_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/widget/barchart.dart';
 import 'package:member_humic/presentation/landing_pages/widget/gradient.dart';
 
@@ -13,6 +18,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  context.read<ProjectGBloc>().add(const ProjectGEvent.fetchApprovedProjects());
+}
+@override
+  void initState() {
+    super.initState();
+    context.read<StatisticBloc>().add(const StatisticEvent.fetchStatistics());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,161 +168,162 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 45,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomRight,
-                                  ),
-                              ),
-                              child:  const Icon(
-                                Icons.group_outlined,
-                                color: Color(0xffE41D1D),
-                                size: 30,
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                    BlocBuilder<StatisticBloc, StatisticState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          loading: () => const Center(child: CircularProgressIndicator()),
+                          loaded: (statistics) => Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
                                 children: [
-                                  Text(
-                                    'Prodi',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xffACACAC)
+                                  Container(
+                                    width: 40,
+                                    height: 45,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.group_outlined,
+                                      color: Color(0xffE41D1D),
+                                      size: 30,
                                     ),
                                   ),
-                                  Text(
-                                    '5',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Prodi',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xffACACAC),
+                                          ),
+                                        ),
+                                        Text(
+                                          statistics.totalDepartments.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Container(
-                                width: 2,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  color: Color(0xffF0F0F0),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Container(
+                                  width: 2,
+                                  height: 40,
+                                  color: const Color(0xffF0F0F0),
                                 ),
                               ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 45,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomRight,
-                                  ),
-                              ),
-                              child: const Icon(
-                                  Icons.person_2_outlined,
-                                  color: Color(0xffE41D1D),
-                                ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Text(
-                                    'Fakultas',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xffACACAC)
+                                  Container(
+                                    width: 40,
+                                    height: 45,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.person_2_outlined,
+                                      color: Color(0xffE41D1D),
                                     ),
                                   ),
-                                  Text(
-                                    '5',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Fakultas',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xffACACAC),
+                                          ),
+                                        ),
+                                        Text(
+                                          statistics.totalFaculties.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Container(
-                                width: 2,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  color: Color(0xffF0F0F0),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Container(
+                                  width: 2,
+                                  height: 40,
+                                  color: const Color(0xffF0F0F0),
                                 ),
                               ),
-                        ),
-                        
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 45,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomRight,
-                                  ),
-                              ),
-                              child: const Icon(
-                                  Icons.monitor_outlined,
-                                  color: Color(0xffE41D1D),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Text(
-                                    'Cabang',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xffACACAC)
+                                  Container(
+                                    width: 40,
+                                    height: 45,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [Color(0xffFFCDD2), Color(0xffFFEFEF)],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.monitor_outlined,
+                                      color: Color(0xffE41D1D),
                                     ),
                                   ),
-                                  Text(
-                                    '5',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Cabang',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xffACACAC),
+                                          ),
+                                        ),
+                                        Text(
+                                          statistics.totalBranches.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          error: (message) => Center(child: Text(message)),
+                          orElse: () => const Center(child: Text('No data available.')),
+                        );
+                      },
                     ),
                     
                     const SizedBox(height: 24),
@@ -394,44 +410,57 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: projectmodel.length,
-                      itemBuilder: (context, index) {
-                        final project = projectmodel[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 0.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                project.tittle,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    shadows: [
-                                      Shadow(
-                                        offset: const Offset(2, 2),
-                                        blurRadius: 0.4,
-                                        color: Colors.black.withOpacity(0.4),
+                    BlocBuilder<ProjectGBloc, ProjectGState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          loading: () => const Center(child: CircularProgressIndicator()),
+                          error: (message) => Center(child: Text('Error: $message')),
+                          loaded: (projects) => ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: projects.data.length,
+                            itemBuilder: (context, index) {
+                              final project = projects.data[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      project.title,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        shadows: [
+                                          Shadow(
+                                            offset: const Offset(2, 2),
+                                            blurRadius: 0.4,
+                                            color: Colors.black.withOpacity(0.4),
+                                          ),
+                                        ],
                                       ),
-                                    ]),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                height: 120,
-                                width: double.infinity,
-                                color: Colors.grey[300],
-                                child: project.imagePath.isNotEmpty
-                                    ? Image.network(project.imagePath,
-                                        fit: BoxFit.cover)
-                                    : const Icon(Icons.image,
-                                        color: Colors.grey),
-                              ),
-                            ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      height: 120,
+                                      width: double.infinity,
+                                      color: Colors.grey[300],
+                                      child: project.thumbnail.isNotEmpty
+                                          ? CachedNetworkImage(
+                                              imageUrl: "${Variables.imageBaseUrl}${project.thumbnail}",
+                                              placeholder: (context, url) => const Center(
+                                                child: CircularProgressIndicator(),
+                                              ),
+                                              errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
+                                            )
+                                          : const Icon(Icons.image, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
+                          orElse: () => const SizedBox.shrink(),
                         );
                       },
                     ),

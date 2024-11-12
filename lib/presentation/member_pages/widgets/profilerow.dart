@@ -22,7 +22,7 @@ class ProfileRow extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  fontSize: 10,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -31,7 +31,7 @@ class ProfileRow extends StatelessWidget {
                 value,
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 10,
+                  fontSize: 12,
                 ),
               ),
             ),
