@@ -445,25 +445,28 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(member.email,
                                   textAlign: TextAlign.center)),
-                          GestureDetector(
-                            onTap: () {
-                              context.read<ChangeStatusMemberBloc>().add(
-                                ChangeStatusMemberEvent.changeStatus(member.id),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: member.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  member.status == 1 ? 'Aktif' : 'Tidak Aktif',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: member.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
-                                    fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                context.read<ChangeStatusMemberBloc>().add(
+                                  ChangeStatusMemberEvent.changeStatus(member.id),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: member.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    member.status == 1 ? 'Aktif' : 'Tidak Aktif',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: member.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),

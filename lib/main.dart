@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:member_humic/core/constant/variable.dart';
 import 'package:member_humic/data/datasources/auth_local_datasource.dart';
+import 'package:member_humic/data/datasources/home/about_service.dart';
 import 'package:member_humic/data/datasources/home/projectg_service.dart';
 import 'package:member_humic/data/datasources/home/static_service.dart';
 import 'package:member_humic/data/datasources/memberhistory_service.dart';
@@ -15,6 +16,7 @@ import 'package:member_humic/presentation/admin_pages/bloc/memberhistory/memberh
 import 'package:member_humic/presentation/admin_pages/bloc/projectgallery/projectgallery_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/bloc/ProjectG/project_g_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/bloc/statistic/statistic_bloc.dart';
+import 'package:member_humic/presentation/landing_pages/bloc/MemberLanding/member_bloc.dart';
 import 'package:member_humic/presentation/member_pages/bloc/ProjectGalleryS/project_gallery_s_bloc.dart';
 import 'package:member_humic/presentation/member_pages/bloc/profile/profile_bloc.dart';
 import 'package:provider/provider.dart';
@@ -119,6 +121,9 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => ChangeStatusMemberBloc(ChangeStatusMemberService()),
           ),
+          BlocProvider<MemberLandingBloc>(
+            create: (context) => MemberLandingBloc(MemberService()),
+        ),
         ],
         child: const MaterialApp(
           title: 'Member Humic',

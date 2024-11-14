@@ -9,5 +9,7 @@ class AddmemberEvent with _$AddmemberEvent {
     required String branch,
     required String password,
     required String retypePassword,
+    required int position,
+    required String position_name,
   }) = AddMember;
 }

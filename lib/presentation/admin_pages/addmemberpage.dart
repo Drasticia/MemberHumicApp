@@ -10,13 +10,14 @@ class Addmemberpage extends StatefulWidget {
 }
 
 class _AddmemberpageState extends State<Addmemberpage> {
-  
   final TextEditingController nameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController retypePasswordController =
-      TextEditingController();
+  final TextEditingController retypePasswordController = TextEditingController();
+  final TextEditingController positionNameController = TextEditingController();
+  int? selectedPosition;
+  String? selectedBranch;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,11 @@ class _AddmemberpageState extends State<Addmemberpage> {
                 emailController.clear();
                 passwordController.clear();
                 retypePasswordController.clear();
+                positionNameController.clear();
+                setState(() {
+                  selectedPosition = null;
+                  selectedBranch = null;
+                });
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Member added successfully!')),
@@ -95,32 +101,60 @@ class _AddmemberpageState extends State<Addmemberpage> {
                           buildInputField(
                             label: 'Nama Lengkap',
                             controller: nameController,
-                            hintText: 'input name',
+                            hintText: 'Input name',
+                          ),
+                          const SizedBox(height: 16),
+                          buildDropdownField(
+                            label: 'Cabang',
+                            selectedValue: selectedBranch,
+                            items: ['Bandung', 'Jakarta', 'Purwokerto', 'Surabaya'],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedBranch = value;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
                           buildInputField(
                             label: 'Email',
                             controller: emailController,
-                            hintText: 'input email',
+                            hintText: 'Input email',
                           ),
                           const SizedBox(height: 16),
                           buildInputField(
                             label: 'Username',
                             controller: usernameController,
-                            hintText: 'input username',
+                            hintText: 'Input username',
+                          ),
+                          const SizedBox(height: 16),
+                          buildDropdownField(
+                            label: 'Posisi Display',
+                            selectedValue: selectedPosition,
+                            items: const [1, 2, 3],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPosition = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          buildInputField(
+                            label: 'Jabatan',
+                            controller: positionNameController,
+                            hintText: 'Input Jabatan',
                           ),
                           const SizedBox(height: 16),
                           buildInputField(
                             label: 'Password',
                             controller: passwordController,
-                            hintText: 'input password',
+                            hintText: 'Input password',
                             obscureText: true,
                           ),
                           const SizedBox(height: 16),
                           buildInputField(
                             label: 'Retype Password',
                             controller: retypePasswordController,
-                            hintText: 'retype password',
+                            hintText: 'Retype password',
                             obscureText: true,
                           ),
                           const SizedBox(height: 32),
@@ -129,17 +163,16 @@ class _AddmemberpageState extends State<Addmemberpage> {
                             height: 40,
                             child: ElevatedButton(
                               onPressed: () {
-                                context
-                                    .read<AddmemberBloc>()
-                                    .add(AddmemberEvent.addMember(
-                                      name: nameController.text,
-                                      username: usernameController.text,
-                                      email: emailController.text,
-                                      branch: 'Default Branch',
-                                      password: passwordController.text,
-                                      retypePassword:
-                                          retypePasswordController.text,
-                                    ));
+                                context.read<AddmemberBloc>().add(AddmemberEvent.addMember(
+                                  name: nameController.text,
+                                  username: usernameController.text,
+                                  email: emailController.text,
+                                  branch: selectedBranch ?? 'Bandung',
+                                  password: passwordController.text,
+                                  retypePassword: retypePasswordController.text,
+                                  position: selectedPosition ?? 1,
+                                  position_name: positionNameController.text,
+                                ));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xff006AFF),
@@ -170,11 +203,11 @@ class _AddmemberpageState extends State<Addmemberpage> {
     );
   }
 
- Widget buildInputField({
-  required String label,
-  required TextEditingController controller,
-  required String hintText,
-  bool obscureText = false,
+  Widget buildInputField({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    bool obscureText = false,
   }) {
     return BlocBuilder<AddmemberBloc, AddmemberState>(
       builder: (context, state) {
@@ -186,9 +219,13 @@ class _AddmemberpageState extends State<Addmemberpage> {
             fieldError = state.message;
           } else if (label == 'Username' && state.message.contains('Username')) {
             fieldError = state.message;
+          } else if (label == 'Cabang' && state.message.contains('Cabang')) {
+            fieldError = state.message;
           } else if (label == 'Password' && state.message.contains('Password') && !state.message.contains('match')) {
             fieldError = state.message;
           } else if (label == 'Retype Password' && state.message.contains('match')) {
+            fieldError = state.message;
+          } else if (label == 'Jabatan' && state.message.contains('Jabatan')) {
             fieldError = state.message;
           }
         }
@@ -218,6 +255,7 @@ class _AddmemberpageState extends State<Addmemberpage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
+                  errorText: fieldError,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     borderSide: const BorderSide(
@@ -232,7 +270,6 @@ class _AddmemberpageState extends State<Addmemberpage> {
                       width: 2.0,
                     ),
                   ),
-                  errorText: fieldError, // Use fieldError here
                   errorStyle: const TextStyle(
                     color: Colors.red,
                     fontSize: 12,
@@ -260,4 +297,63 @@ class _AddmemberpageState extends State<Addmemberpage> {
     );
   }
 
+  
+  Widget buildDropdownField<T>({
+  required String label,
+  required T? selectedValue,
+  required List<T> items,
+  required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            label,
+            style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          width: 300,
+          height: 50,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(12.0), 
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: selectedValue,
+                items: items.map((T item) {
+                  return DropdownMenuItem<T>(
+                    value: item,
+                    child: Text(item.toString(),
+                        style: const TextStyle(fontSize: 16)),
+                  );
+                }).toList(),
+                onChanged: onChanged,
+                isExpanded: true,
+                hint: Text(
+                  'Select $label',
+                  style: const TextStyle(
+                    color: Color(0xffB9B9B9),
+                  ),
+                ),
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                dropdownColor: Colors.white, 
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

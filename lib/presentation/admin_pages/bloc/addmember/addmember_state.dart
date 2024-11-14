@@ -8,6 +8,9 @@ class AddmemberState with _$AddmemberState {
     @Default('') String usernameError,
     @Default('') String passwordError,
     @Default('') String retypePasswordError,
+    @Default('') String branch,
+    @Default('') String positionError,
+    @Default('') String positionNameError,
   }) = AddMemberInitial;
   const factory AddmemberState.loading() = AddMemberLoading;
   const factory AddmemberState.success() = AddMemberSuccess;

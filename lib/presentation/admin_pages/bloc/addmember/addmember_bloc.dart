@@ -47,6 +47,15 @@ class AddmemberBloc extends Bloc<AddmemberEvent, AddmemberState> {
       emit(const AddMemberError('Passwords do not match'));
       return;
     }
+    if (event.position < 1 || event.position > 3) {
+      emit(const AddMemberInitial(positionError: 'Position must be 1, 2, or 3'));
+      return;
+    }
+
+    if (event.position_name.isEmpty) {
+      emit(const AddMemberInitial(positionNameError: 'Position name is required'));
+      return;
+    }
     emit(const AddMemberLoading());
     final result = await userRemoteDatasource.addMember(
       name: event.name,
@@ -55,6 +64,8 @@ class AddmemberBloc extends Bloc<AddmemberEvent, AddmemberState> {
       branch: event.branch,
       password: event.password,
       retypePassword: event.retypePassword,
+      position: event.position,
+      position_name: event.position_name,
     );
     result.fold(
       (error) => emit(AddMemberError(error)),

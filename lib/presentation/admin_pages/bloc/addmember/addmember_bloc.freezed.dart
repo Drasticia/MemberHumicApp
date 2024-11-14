@@ -22,24 +22,47 @@ mixin _$AddmemberEvent {
   String get branch => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
   String get retypePassword => throw _privateConstructorUsedError;
+  int get position => throw _privateConstructorUsedError;
+  String get position_name => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String name, String username, String email,
-            String branch, String password, String retypePassword)
+    required TResult Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)
         addMember,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String name, String username, String email, String branch,
-            String password, String retypePassword)?
+    TResult? Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)?
         addMember,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String name, String username, String email, String branch,
-            String password, String retypePassword)?
+    TResult Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)?
         addMember,
     required TResult orElse(),
   }) =>
@@ -80,7 +103,9 @@ abstract class $AddmemberEventCopyWith<$Res> {
       String email,
       String branch,
       String password,
-      String retypePassword});
+      String retypePassword,
+      int position,
+      String position_name});
 }
 
 /// @nodoc
@@ -104,6 +129,8 @@ class _$AddmemberEventCopyWithImpl<$Res, $Val extends AddmemberEvent>
     Object? branch = null,
     Object? password = null,
     Object? retypePassword = null,
+    Object? position = null,
+    Object? position_name = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -130,6 +157,14 @@ class _$AddmemberEventCopyWithImpl<$Res, $Val extends AddmemberEvent>
           ? _value.retypePassword
           : retypePassword // ignore: cast_nullable_to_non_nullable
               as String,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
+      position_name: null == position_name
+          ? _value.position_name
+          : position_name // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -148,7 +183,9 @@ abstract class _$$AddMemberImplCopyWith<$Res>
       String email,
       String branch,
       String password,
-      String retypePassword});
+      String retypePassword,
+      int position,
+      String position_name});
 }
 
 /// @nodoc
@@ -170,6 +207,8 @@ class __$$AddMemberImplCopyWithImpl<$Res>
     Object? branch = null,
     Object? password = null,
     Object? retypePassword = null,
+    Object? position = null,
+    Object? position_name = null,
   }) {
     return _then(_$AddMemberImpl(
       name: null == name
@@ -196,6 +235,14 @@ class __$$AddMemberImplCopyWithImpl<$Res>
           ? _value.retypePassword
           : retypePassword // ignore: cast_nullable_to_non_nullable
               as String,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as int,
+      position_name: null == position_name
+          ? _value.position_name
+          : position_name // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -209,7 +256,9 @@ class _$AddMemberImpl implements AddMember {
       required this.email,
       required this.branch,
       required this.password,
-      required this.retypePassword});
+      required this.retypePassword,
+      required this.position,
+      required this.position_name});
 
   @override
   final String name;
@@ -223,10 +272,14 @@ class _$AddMemberImpl implements AddMember {
   final String password;
   @override
   final String retypePassword;
+  @override
+  final int position;
+  @override
+  final String position_name;
 
   @override
   String toString() {
-    return 'AddmemberEvent.addMember(name: $name, username: $username, email: $email, branch: $branch, password: $password, retypePassword: $retypePassword)';
+    return 'AddmemberEvent.addMember(name: $name, username: $username, email: $email, branch: $branch, password: $password, retypePassword: $retypePassword, position: $position, position_name: $position_name)';
   }
 
   @override
@@ -242,12 +295,16 @@ class _$AddMemberImpl implements AddMember {
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.retypePassword, retypePassword) ||
-                other.retypePassword == retypePassword));
+                other.retypePassword == retypePassword) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
+            (identical(other.position_name, position_name) ||
+                other.position_name == position_name));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, username, email, branch, password, retypePassword);
+  int get hashCode => Object.hash(runtimeType, name, username, email, branch,
+      password, retypePassword, position, position_name);
 
   /// Create a copy of AddmemberEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -260,34 +317,57 @@ class _$AddMemberImpl implements AddMember {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String name, String username, String email,
-            String branch, String password, String retypePassword)
+    required TResult Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)
         addMember,
   }) {
-    return addMember(name, username, email, branch, password, retypePassword);
+    return addMember(name, username, email, branch, password, retypePassword,
+        position, position_name);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String name, String username, String email, String branch,
-            String password, String retypePassword)?
+    TResult? Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)?
         addMember,
   }) {
-    return addMember?.call(
-        name, username, email, branch, password, retypePassword);
+    return addMember?.call(name, username, email, branch, password,
+        retypePassword, position, position_name);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String name, String username, String email, String branch,
-            String password, String retypePassword)?
+    TResult Function(
+            String name,
+            String username,
+            String email,
+            String branch,
+            String password,
+            String retypePassword,
+            int position,
+            String position_name)?
         addMember,
     required TResult orElse(),
   }) {
     if (addMember != null) {
-      return addMember(name, username, email, branch, password, retypePassword);
+      return addMember(name, username, email, branch, password, retypePassword,
+          position, position_name);
     }
     return orElse();
   }
@@ -328,7 +408,9 @@ abstract class AddMember implements AddmemberEvent {
       required final String email,
       required final String branch,
       required final String password,
-      required final String retypePassword}) = _$AddMemberImpl;
+      required final String retypePassword,
+      required final int position,
+      required final String position_name}) = _$AddMemberImpl;
 
   @override
   String get name;
@@ -342,6 +424,10 @@ abstract class AddMember implements AddmemberEvent {
   String get password;
   @override
   String get retypePassword;
+  @override
+  int get position;
+  @override
+  String get position_name;
 
   /// Create a copy of AddmemberEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -360,7 +446,10 @@ mixin _$AddmemberState {
             String emailError,
             String usernameError,
             String passwordError,
-            String retypePasswordError)
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)
         initial,
     required TResult Function() loading,
     required TResult Function() success,
@@ -369,8 +458,15 @@ mixin _$AddmemberState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult? Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult? Function()? loading,
     TResult? Function()? success,
@@ -379,8 +475,15 @@ mixin _$AddmemberState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult Function()? loading,
     TResult Function()? success,
@@ -447,7 +550,10 @@ abstract class _$$AddMemberInitialImplCopyWith<$Res> {
       String emailError,
       String usernameError,
       String passwordError,
-      String retypePasswordError});
+      String retypePasswordError,
+      String branch,
+      String positionError,
+      String positionNameError});
 }
 
 /// @nodoc
@@ -468,6 +574,9 @@ class __$$AddMemberInitialImplCopyWithImpl<$Res>
     Object? usernameError = null,
     Object? passwordError = null,
     Object? retypePasswordError = null,
+    Object? branch = null,
+    Object? positionError = null,
+    Object? positionNameError = null,
   }) {
     return _then(_$AddMemberInitialImpl(
       nameError: null == nameError
@@ -490,6 +599,18 @@ class __$$AddMemberInitialImplCopyWithImpl<$Res>
           ? _value.retypePasswordError
           : retypePasswordError // ignore: cast_nullable_to_non_nullable
               as String,
+      branch: null == branch
+          ? _value.branch
+          : branch // ignore: cast_nullable_to_non_nullable
+              as String,
+      positionError: null == positionError
+          ? _value.positionError
+          : positionError // ignore: cast_nullable_to_non_nullable
+              as String,
+      positionNameError: null == positionNameError
+          ? _value.positionNameError
+          : positionNameError // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -502,7 +623,10 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
       this.emailError = '',
       this.usernameError = '',
       this.passwordError = '',
-      this.retypePasswordError = ''});
+      this.retypePasswordError = '',
+      this.branch = '',
+      this.positionError = '',
+      this.positionNameError = ''});
 
   @override
   @JsonKey()
@@ -519,10 +643,19 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
   @override
   @JsonKey()
   final String retypePasswordError;
+  @override
+  @JsonKey()
+  final String branch;
+  @override
+  @JsonKey()
+  final String positionError;
+  @override
+  @JsonKey()
+  final String positionNameError;
 
   @override
   String toString() {
-    return 'AddmemberState.initial(nameError: $nameError, emailError: $emailError, usernameError: $usernameError, passwordError: $passwordError, retypePasswordError: $retypePasswordError)';
+    return 'AddmemberState.initial(nameError: $nameError, emailError: $emailError, usernameError: $usernameError, passwordError: $passwordError, retypePasswordError: $retypePasswordError, branch: $branch, positionError: $positionError, positionNameError: $positionNameError)';
   }
 
   @override
@@ -539,12 +672,25 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
             (identical(other.passwordError, passwordError) ||
                 other.passwordError == passwordError) &&
             (identical(other.retypePasswordError, retypePasswordError) ||
-                other.retypePasswordError == retypePasswordError));
+                other.retypePasswordError == retypePasswordError) &&
+            (identical(other.branch, branch) || other.branch == branch) &&
+            (identical(other.positionError, positionError) ||
+                other.positionError == positionError) &&
+            (identical(other.positionNameError, positionNameError) ||
+                other.positionNameError == positionNameError));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, nameError, emailError,
-      usernameError, passwordError, retypePasswordError);
+  int get hashCode => Object.hash(
+      runtimeType,
+      nameError,
+      emailError,
+      usernameError,
+      passwordError,
+      retypePasswordError,
+      branch,
+      positionError,
+      positionNameError);
 
   /// Create a copy of AddmemberState
   /// with the given fields replaced by the non-null parameter values.
@@ -563,35 +709,52 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
             String emailError,
             String usernameError,
             String passwordError,
-            String retypePasswordError)
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)
         initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
   }) {
     return initial(nameError, emailError, usernameError, passwordError,
-        retypePasswordError);
+        retypePasswordError, branch, positionError, positionNameError);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult? Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
   }) {
     return initial?.call(nameError, emailError, usernameError, passwordError,
-        retypePasswordError);
+        retypePasswordError, branch, positionError, positionNameError);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult Function()? loading,
     TResult Function()? success,
@@ -600,7 +763,7 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
   }) {
     if (initial != null) {
       return initial(nameError, emailError, usernameError, passwordError,
-          retypePasswordError);
+          retypePasswordError, branch, positionError, positionNameError);
     }
     return orElse();
   }
@@ -649,13 +812,19 @@ abstract class AddMemberInitial implements AddmemberState {
       final String emailError,
       final String usernameError,
       final String passwordError,
-      final String retypePasswordError}) = _$AddMemberInitialImpl;
+      final String retypePasswordError,
+      final String branch,
+      final String positionError,
+      final String positionNameError}) = _$AddMemberInitialImpl;
 
   String get nameError;
   String get emailError;
   String get usernameError;
   String get passwordError;
   String get retypePasswordError;
+  String get branch;
+  String get positionError;
+  String get positionNameError;
 
   /// Create a copy of AddmemberState
   /// with the given fields replaced by the non-null parameter values.
@@ -710,7 +879,10 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
             String emailError,
             String usernameError,
             String passwordError,
-            String retypePasswordError)
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)
         initial,
     required TResult Function() loading,
     required TResult Function() success,
@@ -722,8 +894,15 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult? Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult? Function()? loading,
     TResult? Function()? success,
@@ -735,8 +914,15 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult Function()? loading,
     TResult Function()? success,
@@ -837,7 +1023,10 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
             String emailError,
             String usernameError,
             String passwordError,
-            String retypePasswordError)
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)
         initial,
     required TResult Function() loading,
     required TResult Function() success,
@@ -849,8 +1038,15 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult? Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult? Function()? loading,
     TResult? Function()? success,
@@ -862,8 +1058,15 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult Function()? loading,
     TResult Function()? success,
@@ -992,7 +1195,10 @@ class _$AddMemberErrorImpl implements AddMemberError {
             String emailError,
             String usernameError,
             String passwordError,
-            String retypePasswordError)
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)
         initial,
     required TResult Function() loading,
     required TResult Function() success,
@@ -1004,8 +1210,15 @@ class _$AddMemberErrorImpl implements AddMemberError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult? Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult? Function()? loading,
     TResult? Function()? success,
@@ -1017,8 +1230,15 @@ class _$AddMemberErrorImpl implements AddMemberError {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String nameError, String emailError, String usernameError,
-            String passwordError, String retypePasswordError)?
+    TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError,
+            String branch,
+            String positionError,
+            String positionNameError)?
         initial,
     TResult Function()? loading,
     TResult Function()? success,

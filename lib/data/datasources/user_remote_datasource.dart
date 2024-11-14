@@ -46,7 +46,7 @@ class UserRemoteDatasource {
       }
     } catch (e) {
       print('Error: $e');
-      return left('Terjadi kesalahan saat memuat data produk.');
+      return left('Terjadi kesalahan saat memuat data member.');
     }
   }
   Future<Either<String, String>> addMember({
@@ -56,6 +56,8 @@ class UserRemoteDatasource {
     required String branch,
     required String password,
     required String retypePassword,
+    required int position,
+    required String position_name,
   }) async {
     try {
       final uri = Uri.parse('${Variables.baseUrl}/api/members');
@@ -73,17 +75,17 @@ class UserRemoteDatasource {
           'branch': branch,
           'password': password,
           'retype_password': retypePassword,
+          'position' : position,
+          'position_name' : position_name
         }),
       );
 
-      // Logging status dan body response untuk debugging
       print('Response Status: ${response.statusCode}');
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 201) {
         return right('Member successfully added.');
       } else {
-        // Return error message from the response body if available
         final errorResponse = jsonDecode(response.body);
         return left(errorResponse['error'] ?? 'Failed to add member.');
       }
