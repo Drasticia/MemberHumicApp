@@ -151,21 +151,21 @@ class MemberDetailDialog extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              const Text(
-                "Riwayat Studi",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "1. S1 - Informatika\n   Telkom University\n2. S2 - Informatika\n   Institut Teknologi Bandung",
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
-              ),
+              // const Text(
+              //   "Riwayat Studi",
+              //   style: TextStyle(
+              //     color: Colors.black,
+              //     fontSize: 12,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // const SizedBox(height: 8),
+              // Text(
+              //   "1. S1 - Informatika\n   Telkom University\n2. S2 - Informatika\n   Institut Teknologi Bandung",
+              //   style: const TextStyle(
+              //     fontSize: 12,
+              //   ),
+              // ),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(

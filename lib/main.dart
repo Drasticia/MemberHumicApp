@@ -8,6 +8,7 @@ import 'package:member_humic/data/datasources/memberhistory_service.dart';
 import 'package:member_humic/data/datasources/profile_service.dart';
 import 'package:member_humic/data/datasources/projectgallery_service.dart';
 import 'package:member_humic/data/datasources/projectgallerymember_service.dart';
+import 'package:member_humic/presentation/admin_pages/bloc/ChangeStatusMember/change_status_member_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/addmember/addmember_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/announcement/announcement_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/memberhistory/memberhistory_bloc.dart';
@@ -25,6 +26,8 @@ import 'package:member_humic/presentation/auth/bloc/logout/logout_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/dashboard.dart';
 import 'package:member_humic/data/datasources/announcement_service.dart'; 
 import 'package:http/http.dart' as http;
+
+import 'data/datasources/changestatusmember_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -112,6 +115,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<StatisticBloc>(
             create: (context) => StatisticBloc(context.read<StatisticsService>()),
+          ),
+          BlocProvider(
+            create: (context) => ChangeStatusMemberBloc(ChangeStatusMemberService()),
           ),
         ],
         child: const MaterialApp(

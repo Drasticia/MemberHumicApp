@@ -355,7 +355,13 @@ abstract class AddMember implements AddmemberEvent {
 mixin _$AddmemberState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError)
+        initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
@@ -363,7 +369,9 @@ mixin _$AddmemberState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
@@ -371,7 +379,9 @@ mixin _$AddmemberState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult Function()? loading,
     TResult Function()? success,
     TResult Function(String message)? error,
@@ -431,6 +441,13 @@ abstract class _$$AddMemberInitialImplCopyWith<$Res> {
   factory _$$AddMemberInitialImplCopyWith(_$AddMemberInitialImpl value,
           $Res Function(_$AddMemberInitialImpl) then) =
       __$$AddMemberInitialImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {String nameError,
+      String emailError,
+      String usernameError,
+      String passwordError,
+      String retypePasswordError});
 }
 
 /// @nodoc
@@ -443,60 +460,147 @@ class __$$AddMemberInitialImplCopyWithImpl<$Res>
 
   /// Create a copy of AddmemberState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? nameError = null,
+    Object? emailError = null,
+    Object? usernameError = null,
+    Object? passwordError = null,
+    Object? retypePasswordError = null,
+  }) {
+    return _then(_$AddMemberInitialImpl(
+      nameError: null == nameError
+          ? _value.nameError
+          : nameError // ignore: cast_nullable_to_non_nullable
+              as String,
+      emailError: null == emailError
+          ? _value.emailError
+          : emailError // ignore: cast_nullable_to_non_nullable
+              as String,
+      usernameError: null == usernameError
+          ? _value.usernameError
+          : usernameError // ignore: cast_nullable_to_non_nullable
+              as String,
+      passwordError: null == passwordError
+          ? _value.passwordError
+          : passwordError // ignore: cast_nullable_to_non_nullable
+              as String,
+      retypePasswordError: null == retypePasswordError
+          ? _value.retypePasswordError
+          : retypePasswordError // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$AddMemberInitialImpl implements AddMemberInitial {
-  const _$AddMemberInitialImpl();
+  const _$AddMemberInitialImpl(
+      {this.nameError = '',
+      this.emailError = '',
+      this.usernameError = '',
+      this.passwordError = '',
+      this.retypePasswordError = ''});
+
+  @override
+  @JsonKey()
+  final String nameError;
+  @override
+  @JsonKey()
+  final String emailError;
+  @override
+  @JsonKey()
+  final String usernameError;
+  @override
+  @JsonKey()
+  final String passwordError;
+  @override
+  @JsonKey()
+  final String retypePasswordError;
 
   @override
   String toString() {
-    return 'AddmemberState.initial()';
+    return 'AddmemberState.initial(nameError: $nameError, emailError: $emailError, usernameError: $usernameError, passwordError: $passwordError, retypePasswordError: $retypePasswordError)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$AddMemberInitialImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$AddMemberInitialImpl &&
+            (identical(other.nameError, nameError) ||
+                other.nameError == nameError) &&
+            (identical(other.emailError, emailError) ||
+                other.emailError == emailError) &&
+            (identical(other.usernameError, usernameError) ||
+                other.usernameError == usernameError) &&
+            (identical(other.passwordError, passwordError) ||
+                other.passwordError == passwordError) &&
+            (identical(other.retypePasswordError, retypePasswordError) ||
+                other.retypePasswordError == retypePasswordError));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, nameError, emailError,
+      usernameError, passwordError, retypePasswordError);
+
+  /// Create a copy of AddmemberState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AddMemberInitialImplCopyWith<_$AddMemberInitialImpl> get copyWith =>
+      __$$AddMemberInitialImplCopyWithImpl<_$AddMemberInitialImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError)
+        initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
   }) {
-    return initial();
+    return initial(nameError, emailError, usernameError, passwordError,
+        retypePasswordError);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
   }) {
-    return initial?.call();
+    return initial?.call(nameError, emailError, usernameError, passwordError,
+        retypePasswordError);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult Function()? loading,
     TResult Function()? success,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
-      return initial();
+      return initial(nameError, emailError, usernameError, passwordError,
+          retypePasswordError);
     }
     return orElse();
   }
@@ -540,7 +644,24 @@ class _$AddMemberInitialImpl implements AddMemberInitial {
 }
 
 abstract class AddMemberInitial implements AddmemberState {
-  const factory AddMemberInitial() = _$AddMemberInitialImpl;
+  const factory AddMemberInitial(
+      {final String nameError,
+      final String emailError,
+      final String usernameError,
+      final String passwordError,
+      final String retypePasswordError}) = _$AddMemberInitialImpl;
+
+  String get nameError;
+  String get emailError;
+  String get usernameError;
+  String get passwordError;
+  String get retypePasswordError;
+
+  /// Create a copy of AddmemberState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddMemberInitialImplCopyWith<_$AddMemberInitialImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -584,7 +705,13 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError)
+        initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
@@ -595,7 +722,9 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
@@ -606,7 +735,9 @@ class _$AddMemberLoadingImpl implements AddMemberLoading {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult Function()? loading,
     TResult Function()? success,
     TResult Function(String message)? error,
@@ -701,7 +832,13 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError)
+        initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
@@ -712,7 +849,9 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
@@ -723,7 +862,9 @@ class _$AddMemberSuccessImpl implements AddMemberSuccess {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult Function()? loading,
     TResult Function()? success,
     TResult Function(String message)? error,
@@ -846,7 +987,13 @@ class _$AddMemberErrorImpl implements AddMemberError {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(
+            String nameError,
+            String emailError,
+            String usernameError,
+            String passwordError,
+            String retypePasswordError)
+        initial,
     required TResult Function() loading,
     required TResult Function() success,
     required TResult Function(String message) error,
@@ -857,7 +1004,9 @@ class _$AddMemberErrorImpl implements AddMemberError {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult? Function()? loading,
     TResult? Function()? success,
     TResult? Function(String message)? error,
@@ -868,7 +1017,9 @@ class _$AddMemberErrorImpl implements AddMemberError {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(String nameError, String emailError, String usernameError,
+            String passwordError, String retypePasswordError)?
+        initial,
     TResult Function()? loading,
     TResult Function()? success,
     TResult Function(String message)? error,

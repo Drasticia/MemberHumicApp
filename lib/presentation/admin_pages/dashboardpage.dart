@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:member_humic/data/datasources/user_remote_datasource.dart';
 import 'package:member_humic/data/models/request/user_request_model.dart';
+import 'package:member_humic/presentation/admin_pages/bloc/ChangeStatusMember/change_status_member_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/bloc/member/member_bloc.dart';
 import 'package:member_humic/presentation/admin_pages/widget/memberdetail.dart';
 
@@ -55,6 +56,7 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
       _fetchMembers();
     }
   }
+
   void _deleteMember(int memberId) {
     context.read<MemberBloc>().add(MemberEvent.delete(memberId));
   }
@@ -82,235 +84,258 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return (Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return (BlocListener<ChangeStatusMemberBloc, ChangeStatusMemberState>(
+      listener: (context, state) {
+        state.when(
+          initial: () {},
+          loading: () {},
+          success: (data) {
+            _fetchMembers();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Status for ${data.data.name} updated successfully!')),
+            );
+          },
+          error: (message) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $message')),
+            );
+          },
+        );
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Color(0xff800C05), Color(0xffE91407)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
-          child: const Text(
-            'Dashboard',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [Color(0xff800C05), Color(0xffE91407)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(
+              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+            ),
+            child: const Text(
+              'Dashboard',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.download,
-                  size: 22,
-                  color: Color(0xff4D4D4D),
-                ),
-                Text(
-                  'Download',
-                  style: TextStyle(
+          actions: [
+            InkWell(
+              onTap: () {},
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.download,
+                    size: 22,
                     color: Color(0xff4D4D4D),
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-              ],
+                  Text(
+                    'Download',
+                    style: TextStyle(
+                      color: Color(0xff4D4D4D),
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(2.0),
+            child: Container(
+              color: const Color(0xff000000).withOpacity(0.1),
+              height: 1,
             ),
           ),
-          const SizedBox(width: 16),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(2.0),
-          child: Container(
-            color: const Color(0xff000000).withOpacity(0.1),
-            height: 1,
-          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Show',
-                      style: TextStyle(
-                          color: Color(0xffE91407),
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 5),
-                    DropdownButton<int>(
-                      value: _selectedEntries,
-                      items: _entriesOptions.map((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text(
-                            value.toString(),
-                            style: const TextStyle(
-                              fontSize: 10,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _selectedEntries = newValue!;
-                        });
-                        _fetchMembers();
-                      },
-                    ),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'entries',
-                      style: TextStyle(
-                          color: Color(0xffE91407),
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    // Search Field
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      child: SizedBox(
-                        width: 200,
-                        child: TextField(
-                          onChanged: (value) {
-                            setState(() {
-                              searchQuery = value;
-                            });
-                            _fetchMembers();
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Search...',
-                            hintStyle: const TextStyle(
-                                fontSize: 10, color: Color(0xffB9B9B9)),
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              size: 16,
-                              color: Color(0xffB9B9B9),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
-                                color: Color(0xffB9B9B9),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Show',
+                        style: TextStyle(
+                            color: Color(0xffE91407),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 5),
+                      DropdownButton<int>(
+                        value: _selectedEntries,
+                        items: _entriesOptions.map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(
+                              value.toString(),
+                              style: const TextStyle(
+                                fontSize: 10,
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedEntries = newValue!;
+                          });
+                          _fetchMembers();
+                        },
+                      ),
+                      const SizedBox(width: 5),
+                      const Text(
+                        'entries',
+                        style: TextStyle(
+                            color: Color(0xffE91407),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      // Search Field
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
+                        child: SizedBox(
+                          width: 200,
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                searchQuery = value;
+                              });
+                              _fetchMembers();
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              hintStyle: const TextStyle(
+                                  fontSize: 10, color: Color(0xffB9B9B9)),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                size: 16,
                                 color: Color(0xffB9B9B9),
-                                width: 2.0,
                               ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffB9B9B9),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: const BorderSide(
+                                  color: Color(0xffB9B9B9),
+                                  width: 2.0,
+                                ),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                             ),
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 8.0),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 32),
-                    Row(
-                      children: [
-                        const Text('Prodi:'),
-                        const SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: selectedProdi,
-                          items: ['All', 'Informatics', 'Biology', 'Literature']
-                              .map((department) {
-                            return DropdownMenuItem(
-                              value: department,
-                              child: Text(department),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedProdi = value!;
-                            });
-                            _fetchMembers();
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 64),
-                    Row(
-                      children: [
-                        const Text('Fakulty:'),
-                        const SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: selectedFaculty,
-                          items: ['All', 'Informatics', 'Teknik', 'Law']
-                              .map((faculty) {
-                            return DropdownMenuItem(
-                              value: faculty,
-                              child: Text(faculty),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedFaculty = value!;
-                            });
-                            _fetchMembers();
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 64),
-                    Row(
-                      children: [
-                        const Text('Cabang:'),
-                        const SizedBox(width: 8),
-                        DropdownButton<String>(
-                          value: selectedBranch,
-                          items: ['All', 'Bandung', 'Surabaya', 'Jakarta']
-                              .map((branch) {
-                            return DropdownMenuItem(
-                              value: branch,
-                              child: Text(branch),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedBranch = value!;
-                            });
-                            _fetchMembers();
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 16),
-                  ],
+                      const SizedBox(width: 32),
+                      Row(
+                        children: [
+                          const Text('Prodi:'),
+                          const SizedBox(width: 8),
+                          DropdownButton<String>(
+                            value: selectedProdi,
+                            items: [
+                              'All',
+                              'Informatics',
+                              'Biology',
+                              'Literature'
+                            ].map((department) {
+                              return DropdownMenuItem(
+                                value: department,
+                                child: Text(department),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedProdi = value!;
+                              });
+                              _fetchMembers();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 64),
+                      Row(
+                        children: [
+                          const Text('Fakulty:'),
+                          const SizedBox(width: 8),
+                          DropdownButton<String>(
+                            value: selectedFaculty,
+                            items: ['All', 'Informatics', 'Teknik', 'Law']
+                                .map((faculty) {
+                              return DropdownMenuItem(
+                                value: faculty,
+                                child: Text(faculty),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedFaculty = value!;
+                              });
+                              _fetchMembers();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 64),
+                      Row(
+                        children: [
+                          const Text('Cabang:'),
+                          const SizedBox(width: 8),
+                          DropdownButton<String>(
+                            value: selectedBranch,
+                            items: ['All', 'Bandung', 'Surabaya', 'Jakarta']
+                                .map((branch) {
+                              return DropdownMenuItem(
+                                value: branch,
+                                child: Text(branch),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedBranch = value!;
+                              });
+                              _fetchMembers();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
                 ),
-              ),
-              BlocBuilder<MemberBloc, MemberState>(
-                builder: (context, state) {
-                  return state.when(
-                    initial: () => Center(child: Text('Welcome to Dashboard')),
-                    loading: () => Center(child: CircularProgressIndicator()),
-                    success: (members) => buildMemberTable(members),
-                    error: (message) => Center(child: Text(message)),
-                  );
-                },
-              ),
-            ],
+                BlocBuilder<MemberBloc, MemberState>(
+                  builder: (context, state) {
+                    return state.when(
+                      initial: () =>
+                          Center(child: Text('Welcome to Dashboard')),
+                      loading: () => Center(child: CircularProgressIndicator()),
+                      success: (members) => buildMemberTable(members),
+                      error: (message) => Center(child: Text(message)),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -420,20 +445,26 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(member.email,
                                   textAlign: TextAlign.center)),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          GestureDetector(
+                            onTap: () {
+                              context.read<ChangeStatusMemberBloc>().add(
+                                ChangeStatusMemberEvent.changeStatus(member.id),
+                              );
+                            },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: member.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
-                                  borderRadius: BorderRadius.circular(22)),
+                                color: member.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
+                                borderRadius: BorderRadius.circular(22),
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   member.status == 1 ? 'Aktif' : 'Tidak Aktif',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: member.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
-                                      fontWeight: FontWeight.bold),
+                                    color: member.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -456,7 +487,8 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
                               onPressed: () {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => MemberDetailDialog(member: member),
+                                  builder: (context) =>
+                                      MemberDetailDialog(member: member),
                                 );
                               },
                               child: const Text('Detail',
@@ -495,43 +527,43 @@ class _DashboardpageAdminState extends State<DashboardpageAdmin> {
 
   Widget buildPaginationControls(int memberCount) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Previous button
-          IconButton(
-            onPressed: currentPage > 1 ? _goToPreviousPage : null,
-            icon: const Icon(Icons.chevron_left),
-            color: currentPage > 1 ? const Color(0xff0d6efd) : Colors.grey,
-          ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: currentPage > 1 ? _goToPreviousPage : null,
+          icon: const Icon(Icons.chevron_left),
+          color: currentPage > 1 ? const Color(0xff0d6efd) : Colors.grey,
+        ),
 
-          // Page indicator
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0.0),
-            child: GestureDetector(
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  color: Color(0xff0d6efd),
-                ),
-                child: Center(
-                  child: Text(
-                    '$currentPage',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: GestureDetector(
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xff0d6efd),
+              ),
+              child: Center(
+                child: Text(
+                  '$currentPage',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
           ),
-          IconButton(
-            onPressed: memberCount == _selectedEntries ? _goToNextPage : null,
-            icon: const Icon(Icons.chevron_right),
-            color: memberCount == _selectedEntries ? const Color(0xff0d6efd) : Colors.grey,
-          ),
-        ],
-      );
+        ),
+        IconButton(
+          onPressed: memberCount == _selectedEntries ? _goToNextPage : null,
+          icon: const Icon(Icons.chevron_right),
+          color: memberCount == _selectedEntries
+              ? const Color(0xff0d6efd)
+              : Colors.grey,
+        ),
+      ],
+    );
   }
 }
