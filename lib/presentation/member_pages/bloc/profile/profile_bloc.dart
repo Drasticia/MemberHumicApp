@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:member_humic/data/datasources/profile_service.dart';
@@ -26,14 +28,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  // Updates user profile data
   Future<void> _onUpdateProfile(UpdateProfile event, Emitter<ProfileState> emit) async {
+    print('Update profile event triggered for user: ${event.updatedUser.name}');
     emit(const ProfileState.loading());
     try {
-      await profileService.updateUserProfile(event.profileData, profilePicturePath: event.profilePicturePath);
+      await profileService.updateUserProfile(event.updatedUser, event.imageFile);
       emit(const ProfileState.updated());
     } catch (e) {
-      emit(ProfileState.error("Failed to update profile: ${e.toString()}"));
+      emit(ProfileState.error("Failed to update profile: $e"));
     }
   }
+
 }

@@ -17,26 +17,44 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
   @override
   void initState() {
     super.initState();
-    // Trigger Profile Event to fetch profile data when the page loads
     context.read<ProfileBloc>().add(const ProfileEvent.fetchProfile());
   }
-
+    void _fetchUserProfile() {
+    context.read<ProfileBloc>().add(const ProfileEvent.fetchProfile());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(),
-      body: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          return state.when(
-            initial: () => const Center(child: CircularProgressIndicator()),
-            loading: () => const Center(child: CircularProgressIndicator()),
-            loaded: (userProfile) => _buildProfileContent(userProfile.data),
-            error: (message) => _buildErrorState(message),
-            updated: () => _buildUpdateState(),
+      body:BlocListener<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            updated: () {
+              _fetchUserProfile();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Profile updated successfully!")),
+              );
+            },
+            error: (message) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+            },
           );
         },
-      )
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            return state.when(
+              initial: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              loaded: (userProfile) => _buildProfileContent(userProfile.data),
+              error: (message) => _buildErrorState(message),
+              updated: () => const SizedBox.shrink(),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -119,7 +137,8 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
                     const SizedBox(height: 12),
                     ProfileRow(label: "Program Studi", value: user.department),
                     const SizedBox(height: 12),
-                    ProfileRow(label: "Nomor HP", value: user.handphone.toString()),
+                    ProfileRow(
+                        label: "Nomor HP", value: user.handphone.toString()),
                     const SizedBox(height: 12),
                     ProfileRow(
                       label: "Jenis Kelamin",
@@ -147,6 +166,7 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
                     ),
                     const SizedBox(height: 8),
                     _buildEducationHistory(user),
+                    const SizedBox(height: 12),
                     Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
@@ -191,6 +211,7 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
       );
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, 
       children: List<Widget>.from(
         user.eduBackground.asMap().entries.map((entry) {
           final index = entry.key + 1;
@@ -203,7 +224,6 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
       ),
     );
   }
-
 
   Widget _buildProfilePicture(dynamic user) {
     return Padding(
@@ -245,7 +265,9 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              color: user.status == 1 ? const Color(0xffEBF9F1) : const Color(0xffffcfcf),
+              color: user.status == 1
+                  ? const Color(0xffEBF9F1)
+                  : const Color(0xffffcfcf),
               borderRadius: BorderRadius.circular(22),
             ),
             child: Padding(
@@ -254,7 +276,9 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
                 user.status == 1 ? 'Aktif' : 'Tidak Aktif',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: user.status == 1 ? const Color(0xff1F9254) : const Color(0xff930000),
+                  color: user.status == 1
+                      ? const Color(0xff1F9254)
+                      : const Color(0xff930000),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -278,8 +302,9 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Retry fetching profile data
-              context.read<ProfileBloc>().add(const ProfileEvent.fetchProfile());
+              context
+                  .read<ProfileBloc>()
+                  .add(const ProfileEvent.fetchProfile());
             },
             child: const Text('Retry'),
           ),
@@ -287,26 +312,4 @@ class _DashboardpageMemberState extends State<DashboardpageMember> {
       ),
     );
   }
-
-  Widget _buildUpdateState() {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Profile updated successfully",
-          style: TextStyle(color: Colors.green, fontSize: 16),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            // Go back to profile page after update
-            Navigator.pop(context);
-          },
-          child: const Text('Back to Profile'),
-        ),
-      ],
-    ),
-  );
-}
 }

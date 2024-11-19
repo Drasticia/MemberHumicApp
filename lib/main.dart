@@ -65,10 +65,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         Provider<ProfileService>(
-          create: (context) => ProfileService(
-            Variables.baseUrl,
-            context.read<AuthLocalDatasource>(),
-          ),
+          create: (_) => ProfileService(),
         ),
         Provider<ProjectGalleryMemberService>(
           create: (_) => ProjectGalleryMemberService(),

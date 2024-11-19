@@ -19,25 +19,19 @@ mixin _$ProfileEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchProfile,
-    required TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)
-        updateProfile,
+    required TResult Function(Data updatedUser, File? imageFile) updateProfile,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchProfile,
-    TResult? Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult? Function(Data updatedUser, File? imageFile)? updateProfile,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchProfile,
-    TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult Function(Data updatedUser, File? imageFile)? updateProfile,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -125,9 +119,7 @@ class _$FetchProfileImpl implements FetchProfile {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchProfile,
-    required TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)
-        updateProfile,
+    required TResult Function(Data updatedUser, File? imageFile) updateProfile,
   }) {
     return fetchProfile();
   }
@@ -136,9 +128,7 @@ class _$FetchProfileImpl implements FetchProfile {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchProfile,
-    TResult? Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult? Function(Data updatedUser, File? imageFile)? updateProfile,
   }) {
     return fetchProfile?.call();
   }
@@ -147,9 +137,7 @@ class _$FetchProfileImpl implements FetchProfile {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchProfile,
-    TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult Function(Data updatedUser, File? imageFile)? updateProfile,
     required TResult orElse(),
   }) {
     if (fetchProfile != null) {
@@ -200,7 +188,7 @@ abstract class _$$UpdateProfileImplCopyWith<$Res> {
           _$UpdateProfileImpl value, $Res Function(_$UpdateProfileImpl) then) =
       __$$UpdateProfileImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({Map<String, dynamic> profileData, String? profilePicturePath});
+  $Res call({Data updatedUser, File? imageFile});
 }
 
 /// @nodoc
@@ -216,18 +204,18 @@ class __$$UpdateProfileImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? profileData = null,
-    Object? profilePicturePath = freezed,
+    Object? updatedUser = null,
+    Object? imageFile = freezed,
   }) {
     return _then(_$UpdateProfileImpl(
-      null == profileData
-          ? _value._profileData
-          : profileData // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-      freezed == profilePicturePath
-          ? _value.profilePicturePath
-          : profilePicturePath // ignore: cast_nullable_to_non_nullable
-              as String?,
+      null == updatedUser
+          ? _value.updatedUser
+          : updatedUser // ignore: cast_nullable_to_non_nullable
+              as Data,
+      freezed == imageFile
+          ? _value.imageFile
+          : imageFile // ignore: cast_nullable_to_non_nullable
+              as File?,
     ));
   }
 }
@@ -235,24 +223,16 @@ class __$$UpdateProfileImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$UpdateProfileImpl implements UpdateProfile {
-  const _$UpdateProfileImpl(
-      final Map<String, dynamic> profileData, this.profilePicturePath)
-      : _profileData = profileData;
-
-  final Map<String, dynamic> _profileData;
-  @override
-  Map<String, dynamic> get profileData {
-    if (_profileData is EqualUnmodifiableMapView) return _profileData;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_profileData);
-  }
+  const _$UpdateProfileImpl(this.updatedUser, this.imageFile);
 
   @override
-  final String? profilePicturePath;
+  final Data updatedUser;
+  @override
+  final File? imageFile;
 
   @override
   String toString() {
-    return 'ProfileEvent.updateProfile(profileData: $profileData, profilePicturePath: $profilePicturePath)';
+    return 'ProfileEvent.updateProfile(updatedUser: $updatedUser, imageFile: $imageFile)';
   }
 
   @override
@@ -260,15 +240,14 @@ class _$UpdateProfileImpl implements UpdateProfile {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UpdateProfileImpl &&
-            const DeepCollectionEquality()
-                .equals(other._profileData, _profileData) &&
-            (identical(other.profilePicturePath, profilePicturePath) ||
-                other.profilePicturePath == profilePicturePath));
+            (identical(other.updatedUser, updatedUser) ||
+                other.updatedUser == updatedUser) &&
+            const DeepCollectionEquality().equals(other.imageFile, imageFile));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_profileData), profilePicturePath);
+  int get hashCode => Object.hash(
+      runtimeType, updatedUser, const DeepCollectionEquality().hash(imageFile));
 
   /// Create a copy of ProfileEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -282,35 +261,29 @@ class _$UpdateProfileImpl implements UpdateProfile {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() fetchProfile,
-    required TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)
-        updateProfile,
+    required TResult Function(Data updatedUser, File? imageFile) updateProfile,
   }) {
-    return updateProfile(profileData, profilePicturePath);
+    return updateProfile(updatedUser, imageFile);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? fetchProfile,
-    TResult? Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult? Function(Data updatedUser, File? imageFile)? updateProfile,
   }) {
-    return updateProfile?.call(profileData, profilePicturePath);
+    return updateProfile?.call(updatedUser, imageFile);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? fetchProfile,
-    TResult Function(
-            Map<String, dynamic> profileData, String? profilePicturePath)?
-        updateProfile,
+    TResult Function(Data updatedUser, File? imageFile)? updateProfile,
     required TResult orElse(),
   }) {
     if (updateProfile != null) {
-      return updateProfile(profileData, profilePicturePath);
+      return updateProfile(updatedUser, imageFile);
     }
     return orElse();
   }
@@ -348,11 +321,11 @@ class _$UpdateProfileImpl implements UpdateProfile {
 }
 
 abstract class UpdateProfile implements ProfileEvent {
-  const factory UpdateProfile(final Map<String, dynamic> profileData,
-      final String? profilePicturePath) = _$UpdateProfileImpl;
+  const factory UpdateProfile(final Data updatedUser, final File? imageFile) =
+      _$UpdateProfileImpl;
 
-  Map<String, dynamic> get profileData;
-  String? get profilePicturePath;
+  Data get updatedUser;
+  File? get imageFile;
 
   /// Create a copy of ProfileEvent
   /// with the given fields replaced by the non-null parameter values.

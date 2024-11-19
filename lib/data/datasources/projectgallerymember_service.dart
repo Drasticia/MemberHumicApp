@@ -56,10 +56,8 @@ class ProjectGalleryMemberService {
       ),
     );
 
-    // Mengirim request
     final response = await request.send();
 
-    // Mengecek respons dari server
     if (response.statusCode == 200) {
       final responseBody = await response.stream.bytesToString();
       final json = jsonDecode(responseBody);
