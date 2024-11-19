@@ -57,7 +57,7 @@ class ProjectGallery {
         date: DateTime.parse(json["date"]),
         comment: json["comment"]?? '',
         userId: json["user_id"],
-        status: json["status"],
+        status: json["status"]?? '',
         thumbnail: json["thumbnail"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),

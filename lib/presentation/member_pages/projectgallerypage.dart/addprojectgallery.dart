@@ -32,11 +32,7 @@ class _AddprojectgalleryState extends State<Addprojectgallery> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProjectGallerySBloc(
-        service: ProjectGalleryMemberService(),
-      ),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -63,9 +59,10 @@ class _AddprojectgalleryState extends State<Addprojectgallery> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Project "${project.title}" added successfully!')),
                 );
-                // Ensure the context is still mounted before navigating back
+                // Pastikan memicu FetchGallery
                 if (context.mounted) {
-                  Navigator.of(context).pop(true); // Signal that data should be reloaded
+                  context.read<ProjectGallerySBloc>().add(ProjectGallerySEvent.fetchGallery());
+                  Navigator.of(context).pop(true); 
                 }
               },
               error: (message) {
@@ -349,7 +346,6 @@ class _AddprojectgalleryState extends State<Addprojectgallery> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

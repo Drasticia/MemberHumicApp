@@ -120,7 +120,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<MemberLandingBloc>(
             create: (context) => MemberLandingBloc(MemberService()),
-        ),
+          ),
         ],
         child: const MaterialApp(
           title: 'Member Humic',

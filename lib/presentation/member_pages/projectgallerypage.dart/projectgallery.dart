@@ -84,7 +84,6 @@ class _ProjectgalleryMemberState extends State<ProjectgalleryMember> {
                       ),
                     );
 
-                    // Jika proyek berhasil ditambahkan (result == true), panggil event fetchGallery untuk memperbarui daftar
                     if (result == true) {
                       context.read<ProjectGallerySBloc>().add(ProjectGallerySEvent.fetchGallery());
                     }
