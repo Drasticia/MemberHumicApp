@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'package:member_humic/core/constant/variable.dart';
-import 'package:member_humic/data/models/request/user_request_model.dart';
 import 'dart:convert';
 
 import 'package:member_humic/data/models/respons/About/aboutmember_response.dart';

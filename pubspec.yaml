@@ -114,3 +114,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/HumicMemberIcon.png"
+  adaptive_icon_background: "#9BA8AB"
+  adaptive_icon_foreground: "assets/icons/HumicMemberIcon.png"

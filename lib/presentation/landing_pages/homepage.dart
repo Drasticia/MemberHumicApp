@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:member_humic/core/constant/variable.dart';
 import 'package:member_humic/models/lmember.dart';
 import 'package:member_humic/models/member.dart';
-import 'package:member_humic/models/projectmodels.dart';
 import 'package:member_humic/presentation/landing_pages/bloc/ProjectG/project_g_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/bloc/statistic/statistic_bloc.dart';
 import 'package:member_humic/presentation/landing_pages/widget/barchart.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:member_humic/data/datasources/projectgallerymember_service.dart';
 import 'package:member_humic/presentation/admin_pages/widget/gradientborder.dart';
 import 'package:member_humic/presentation/member_pages/bloc/ProjectGalleryS/project_gallery_s_bloc.dart';
 

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:member_humic/data/datasources/projectgallery_service.dart';
 import 'package:member_humic/data/datasources/projectgallerymember_service.dart';
 import 'package:member_humic/data/models/request/projectgallerymember_moder.dart';
 
